@@ -1,0 +1,31 @@
+{
+  "name": "@mind-elixir/import-xmind",
+  "private": false,
+  "version": "1.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "bnp": "pnpm build && pnpm publish --access public",
+    "bnb": "pnpm build && pnpm publish --tag beta --access public"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "jszip": "^3.10.1",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "dependencies": {
+    "@types/node": "^24.0.0",
+    "fast-xml-parser": "^4.5.0",
+    "mind-elixir": "5.0.0-beta.25"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/import-xmind.js",
+      "require": "./dist/import-xmind.umd.cjs",
+      "types": "./dist/main.d.ts"
+    }
+  }
+}
