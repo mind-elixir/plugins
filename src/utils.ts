@@ -391,7 +391,9 @@ function convertTopic(
     if (typeof xmindTopic.labels === "string") {
       meTopic.tags = xmindTopic.labels.split(",").map((label) => label.trim());
     } else {
-      meTopic.tags = xmindTopic.labels as any;
+      const labels = xmindTopic.labels as any;
+      if (labels.label) meTopic.tags = [labels.label];
+      else meTopic.tags = labels;
     }
   }
 
