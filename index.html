@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>XMind File Import Test</title>
+    <title>XMind & FreeMind File Import Test</title>
     <style>
       /* test tailwind compatibility */
       *,
@@ -25,16 +25,16 @@
   </head>
   <body>
     <div id="app">
-      <h1>XMind File Import Test</h1>
+      <h1>XMind & FreeMind File Import Test</h1>
       <div class="card">
-        <p>Select an XMind file to import and test:</p>
-        <input type="file" id="xmindFileInput" accept=".xmind" />
-        <button id="importButton">Import XMind File</button>
+        <p>Select an XMind (.xmind) or FreeMind (.mm) file to import and test:</p>
+        <input type="file" id="fileInput" accept=".xmind,.mm" />
+        <button id="importButton">Import File</button>
       </div>
       <div id="map"></div>
     </div>
     <script type="module">
-      import { importXMindFile, convertXmindToMindElixir } from "/src/main.ts";
+      import { importXMindFile, convertXmindToMindElixir, importFreeMindFile } from "/src/main.ts";
       import MindElixir from "mind-elixir";
       const options = {
         el: "#map",
@@ -91,25 +91,42 @@
         },
       };
       // Get DOM elements
-      const fileInput = document.getElementById("xmindFileInput");
+      const fileInput = document.getElementById("fileInput");
       const importButton = document.getElementById("importButton");
 
       // Add event listener to the import button
       importButton.addEventListener("click", async () => {
-        
         const file = fileInput.files[0];
+        if (!file) {
+          alert("Please select a file first!");
+          return;
+        }
+
         try {
-          // Call the importXMindFile function
-          const sheets = await importXMindFile(file);
+          let mindElixirData;
+
+          // Check file extension to determine import method
+          if (file.name.toLowerCase().endsWith('.xmind')) {
+            // Import XMind file
+            console.log("Importing XMind file...");
+            const sheets = await importXMindFile(file);
+            console.log("XMind sheets:", sheets);
+            mindElixirData = convertXmindToMindElixir(sheets[0]);
+          } else if (file.name.toLowerCase().endsWith('.mm')) {
+            // Import FreeMind file
+            console.log("Importing FreeMind file...");
+            mindElixirData = await importFreeMindFile(file);
+          } else {
+            throw new Error("Unsupported file format. Please select a .xmind or .mm file.");
+          }
 
           // Display the result
-          console.log(sheets); // Log the sheets to the console for inspection
-          const medata = convertXmindToMindElixir(sheets[0]);
-          console.log(medata);
-          let mind = new MindElixir(options); 
-          mind.init(medata);
+          console.log("MindElixir data:", mindElixirData);
+          let mind = new MindElixir(options);
+          mind.init(mindElixirData);
         } catch (error) {
-          console.error(error);
+          console.error("Import error:", error);
+          alert(`Failed to import file: ${error.message}`);
         }
       });
     </script>

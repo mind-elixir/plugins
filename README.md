@@ -1,6 +1,9 @@
 # @mind-elixir/import-xmind
 
-A TypeScript library for importing XMind files and converting them to MindElixir format. This package supports both modern XMind files (JSON format) and legacy XMind files (XML format).
+A TypeScript library for importing XMind and FreeMind files and converting them to MindElixir format. This package supports:
+- Modern XMind files (JSON format)
+- Legacy XMind files (XML format)
+- FreeMind MM files (XML format)
 
 ## Installation
 
@@ -18,6 +21,8 @@ yarn add @mind-elixir/import-xmind jszip fast-xml-parser mind-elixir
 ## Usage
 
 ### Basic Usage
+
+#### XMind Files
 
 ```typescript
 import {
@@ -46,6 +51,35 @@ try {
   mind.init(mindElixirData);
 } catch (error) {
   console.error("Failed to import XMind file:", error);
+}
+```
+
+#### FreeMind Files
+
+```typescript
+import {
+  importFreeMindFile,
+} from "@mind-elixir/import-xmind";
+import MindElixir from "mind-elixir";
+
+// Import FreeMind MM file
+const fileInput = document.getElementById("fileInput") as HTMLInputElement;
+const file = fileInput.files[0];
+
+try {
+  // Parse FreeMind file (returns MindElixir data directly with FreeMind theme)
+  const mindElixirData = await importFreeMindFile(file);
+
+  // Initialize MindElixir
+  const mind = new MindElixir({
+    el: "#map",
+    direction: MindElixir.SIDE,
+    theme: mindElixirData.theme, // Apply FreeMind Classic theme
+  });
+
+  mind.init(mindElixirData);
+} catch (error) {
+  console.error("Failed to import FreeMind file:", error);
 }
 ```
 
@@ -101,7 +135,26 @@ Converts a single XMind sheet to MindElixir format.
 
 - `MindElixirData`: Data structure compatible with MindElixir
 
-## Supported XMind Features
+### `importFreeMindFile(file: File): Promise<MindElixirData>`
+
+Imports a FreeMind MM file and returns MindElixir data directly.
+
+**Parameters:**
+
+- `file`: The FreeMind MM file to import (File object)
+
+**Returns:**
+
+- `Promise<MindElixirData>`: Data structure compatible with MindElixir
+
+**Throws:**
+
+- Error if the file is not a valid FreeMind MM file
+- Error if the file cannot be parsed
+
+## Supported Features
+
+### XMind Features
 
 ### ✅ Fully Supported
 
@@ -124,6 +177,31 @@ Converts a single XMind sheet to MindElixir format.
 - **Themes**: Basic theme conversion (colors and styles)
 - **Markers**: Limited marker support
 - **Boundaries**: Basic boundary support
+
+### FreeMind Features
+
+#### ✅ Fully Supported
+
+- **Nodes and Subnodes**: Complete hierarchy preservation
+- **Text Content**: Node text from TEXT attribute and rich content
+- **Font Styling**: Font family, size, bold, italic
+- **Colors**: Text color and background color
+- **Borders**: Edge styling with color, width, and style
+- **Cloud Styling**: Converted to rounded dashed borders
+- **Notes**: Rich content notes (HTML to plain text conversion)
+- **Hyperlinks**: External links
+- **Icons**: Converted to tags/labels
+- **Folding State**: Expanded/collapsed state
+- **Arrow Links**: Connections between nodes
+- **Classic Theme**: Automatic FreeMind-style theme application
+- **HTML Processing**: Automatic extraction of text from HTML richcontent
+
+#### ❌ Not Supported
+
+- **Hooks/Plugins**: FreeMind-specific extensions
+- **Attributes**: Custom node attributes
+- **Complex Rich Content**: Advanced HTML formatting (only plain text is extracted)
+- **Positioning**: Absolute positioning information
 
 ## Development
 
@@ -169,6 +247,42 @@ MIT License - see LICENSE file for details.
 - [XMind](https://www.xmind.net/) - The mind mapping software that creates .xmind files
 
 ## Changelog
+
+### 1.0.7
+
+- Fixed richcontent processing error: "find is not a function"
+- Simplified richcontent handling to support only the standard format
+- Updated type definitions to reflect actual richcontent structure
+- Removed unnecessary compatibility code for old formats
+
+### 1.0.6
+
+- Updated richcontent processing to handle new XML parser format
+- Support for `#text` attribute in richcontent elements
+- Improved compatibility with different FreeMind file formats
+- Enhanced HTML text extraction from richcontent
+
+### 1.0.5
+
+- Improved HTML content processing in richcontent elements
+- Used `stopNodes` option to preserve original HTML structure
+- Enhanced text extraction from HTML richcontent (both NODE and NOTE types)
+- Better handling of complex HTML formatting in FreeMind files
+
+### 1.0.4
+
+- Added FreeMind Classic theme that automatically applies when importing MM files
+- Root nodes use classic yellow background (#ffff99)
+- Main branches use blue background (#99ccff)
+- Sub-nodes use green background (#99ff99)
+- Fixed root node array handling issue
+
+### 1.0.3
+
+- Added FreeMind MM format support
+- New `importFreeMindFile` function for direct FreeMind import
+- Support for FreeMind-specific features (fonts, edges, clouds, icons, arrows)
+- Updated test page to support both XMind and FreeMind files
 
 ### 1.0.0
 
