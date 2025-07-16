@@ -4,6 +4,12 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    mind-elixir:
+      specifier: 5.0.0-beta.25
+      version: 5.0.0-beta.25
+
 importers:
 
   .:
@@ -27,7 +33,7 @@ importers:
         specifier: ^4.5.0
         version: 4.5.3
       mind-elixir:
-        specifier: 5.0.0-beta.25
+        specifier: 'catalog:'
         version: 5.0.0-beta.25
     devDependencies:
       typescript:
@@ -52,7 +58,7 @@ importers:
         specifier: ^3.10.1
         version: 3.10.1
       mind-elixir:
-        specifier: 5.0.0-beta.25
+        specifier: 'catalog:'
         version: 5.0.0-beta.25
     devDependencies:
       typescript:
@@ -74,7 +80,7 @@ importers:
         specifier: workspace:*
         version: link:../import-xmind
       mind-elixir:
-        specifier: 5.0.0-beta.25
+        specifier: 'catalog:'
         version: 5.0.0-beta.25
     devDependencies:
       '@types/node':

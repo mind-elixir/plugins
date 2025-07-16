@@ -5,7 +5,6 @@ import MindElixir from 'mind-elixir'
 // 创建MindElixir实例
 const mindElixir = new MindElixir({
   el: '#map',
-  direction: MindElixir.LEFT,
   draggable: true,
   contextMenu: true,
   toolBar: true,

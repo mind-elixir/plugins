@@ -1,2 +1,5 @@
 packages:
   - 'packages/*'
+
+catalog:
+  mind-elixir: ^5.0.0
