@@ -95,7 +95,7 @@ function convertStyle(xmindStyle: Style): NodeObj["style"] {
  * @param xmindTheme XMind的主题对象
  * @returns MindElixir的主题对象
  */
-function convertTheme(xmindTheme: XMindTheme): MindElixirTheme {
+export function convertTheme(xmindTheme: XMindTheme): MindElixirTheme {
   // 创建基础主题结构
   const theme: MindElixirTheme = {
     name: xmindTheme.title || xmindTheme.id || "Custom Theme",

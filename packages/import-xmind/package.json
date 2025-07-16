@@ -1,0 +1,43 @@
+{
+  "name": "@mind-elixir/import-xmind",
+  "private": false,
+  "version": "1.0.7",
+  "type": "module",
+  "description": "Import XMind files to MindElixir format",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite build --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@types/node": "^24.0.0",
+    "fast-xml-parser": "^4.5.0",
+    "jszip": "^3.10.1",
+    "mind-elixir": "5.0.0-beta.25"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "keywords": [
+    "xmind",
+    "mindmap",
+    "mind-elixir",
+    "import"
+  ],
+  "author": "Mind Elixir",
+  "license": "MIT"
+}

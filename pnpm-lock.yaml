@@ -7,6 +7,40 @@ settings:
 importers:
 
   .:
+    devDependencies:
+      typescript:
+        specifier: ~5.8.3
+        version: 5.8.3
+      vite:
+        specifier: ^6.3.5
+        version: 6.3.5(@types/node@24.0.0)
+      vite-plugin-dts:
+        specifier: ^4.5.4
+        version: 4.5.4(@types/node@24.0.0)(rollup@4.41.1)(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.0))
+
+  packages/import-freemind:
+    dependencies:
+      '@types/node':
+        specifier: ^24.0.0
+        version: 24.0.0
+      fast-xml-parser:
+        specifier: ^4.5.0
+        version: 4.5.3
+      mind-elixir:
+        specifier: 5.0.0-beta.25
+        version: 5.0.0-beta.25
+    devDependencies:
+      typescript:
+        specifier: ~5.8.3
+        version: 5.8.3
+      vite:
+        specifier: ^6.3.5
+        version: 6.3.5(@types/node@24.0.0)
+      vite-plugin-dts:
+        specifier: ^4.5.4
+        version: 4.5.4(@types/node@24.0.0)(rollup@4.41.1)(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.0))
+
+  packages/import-xmind:
     dependencies:
       '@types/node':
         specifier: ^24.0.0
@@ -30,6 +64,28 @@ importers:
       vite-plugin-dts:
         specifier: ^4.5.4
         version: 4.5.4(@types/node@24.0.0)(rollup@4.41.1)(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.0))
+
+  packages/test-app:
+    dependencies:
+      '@mind-elixir/import-freemind':
+        specifier: workspace:*
+        version: link:../import-freemind
+      '@mind-elixir/import-xmind':
+        specifier: workspace:*
+        version: link:../import-xmind
+      mind-elixir:
+        specifier: 5.0.0-beta.25
+        version: 5.0.0-beta.25
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.0
+        version: 24.0.0
+      typescript:
+        specifier: ~5.8.3
+        version: 5.8.3
+      vite:
+        specifier: ^6.3.5
+        version: 6.3.5(@types/node@24.0.0)
 
 packages:
 

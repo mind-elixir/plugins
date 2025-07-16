@@ -5,8 +5,6 @@ import type {
   FreeMindNode,
   FreeMindFont,
   FreeMindEdge,
-  FreeMindCloud,
-  FreeMindRichContent,
 } from "./types/freemind-model";
 import type {
   MindElixirData,

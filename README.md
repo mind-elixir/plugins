@@ -1,21 +1,60 @@
-# @mind-elixir/import-xmind
+# MindElixir Import Monorepo
 
-A TypeScript library for importing XMind and FreeMind files and converting them to MindElixir format. This package supports:
+这是一个基于 pnpm workspace 的 monorepo，包含了 XMind 和 FreeMind 文件导入到 MindElixir 格式的功能包。
+
+## 项目结构
+
+```
+├── packages/
+│   ├── import-xmind/          # XMind 导入包
+│   ├── import-freemind/       # FreeMind 导入包
+│   └── test-app/              # 测试应用
+├── package.json               # 根目录配置
+├── pnpm-workspace.yaml        # pnpm workspace 配置
+└── tsconfig.json              # TypeScript 项目引用配置
+```
+
+## 包说明
+
+### @mind-elixir/import-xmind
+XMind 文件导入功能包，支持：
 - Modern XMind files (JSON format)
 - Legacy XMind files (XML format)
+
+### @mind-elixir/import-freemind
+FreeMind 文件导入功能包，支持：
 - FreeMind MM files (XML format)
 
-## Installation
+## 开发指南
+
+### 安装依赖
 
 ```bash
-# Using pnpm (recommended)
-pnpm add @mind-elixir/import-xmind jszip fast-xml-parser mind-elixir
+pnpm install
+```
 
-# Using npm
-npm install @mind-elixir/import-xmind jszip fast-xml-parser mind-elixir
+### 构建所有包
 
-# Using yarn
-yarn add @mind-elixir/import-xmind jszip fast-xml-parser mind-elixir
+```bash
+pnpm build
+```
+
+### 开发模式
+
+```bash
+# 启动测试应用
+cd packages/test-app
+pnpm dev
+```
+
+### 单独使用包
+
+```bash
+# 安装 XMind 导入包
+pnpm add @mind-elixir/import-xmind
+
+# 安装 FreeMind 导入包
+pnpm add @mind-elixir/import-freemind
 ```
 
 ## Usage
