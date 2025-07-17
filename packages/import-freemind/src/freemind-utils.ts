@@ -19,7 +19,7 @@ function createFreeMindTheme(): MindElixirTheme {
   return {
     name: "FreeMind Classic",
     palette: [
-      "#333333",  
+      "#333333",
     ],
     cssVar: {
       // 根节点样式 - FreeMind经典黄色
@@ -192,7 +192,14 @@ function extractNodeText(node: FreeMindNode): string {
   // 优先使用TEXT属性
   if (node.TEXT) {
     console.log("Found TEXT attribute:", node.TEXT);
-    return node.TEXT;
+    if (typeof node.TEXT === 'string') {
+      // 解码HTML实体
+      const decodedText = decodeHtmlEntities(node.TEXT);
+      console.log("Decoded TEXT:", decodedText);
+      return decodedText;
+    }else{
+      return node.TEXT
+    }
   }
 
   // 如果没有TEXT属性，尝试从richcontent中提取
