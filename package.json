@@ -10,6 +10,7 @@
     "clean": "pnpm -r clean"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.5",
     "turbo": "^2.5.5",
     "typescript": "~5.8.3",
     "vite": "^6.3.5",

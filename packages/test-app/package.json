@@ -1,7 +1,7 @@
 {
   "name": "@mind-elixir/test-app",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Test application for import-xmind and import-freemind packages",
   "scripts": {
