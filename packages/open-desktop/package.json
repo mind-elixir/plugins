@@ -1,0 +1,43 @@
+{
+  "name": "@mind-elixir/open-desktop",
+  "private": false,
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Import XMind files to MindElixir format",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite build --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.4",
+    "mind-elixir": "catalog:"
+  },
+  "keywords": [
+    "xmind",
+    "mindmap",
+    "mind-elixir",
+    "import"
+  ],
+  "author": "Mind Elixir",
+  "license": "MIT"
+}

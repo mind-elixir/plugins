@@ -1,6 +1,8 @@
 import { importXMindFile, convertXmindToMindElixir } from '@mind-elixir/import-xmind'
 import { importFreeMindFile } from '@mind-elixir/import-freemind'
+import { launchMindElixir } from '@mind-elixir/open-desktop'
 import MindElixir from 'mind-elixir'
+import example from 'mind-elixir/example'
 
 // 创建MindElixir实例
 const mindElixir = new MindElixir({
@@ -59,4 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
   xmindBtn?.addEventListener('click', testXMindImport)
   freemindBtn?.addEventListener('click', testFreeMindImport)
+})
+
+document.getElementById('test-open-desktop')?.addEventListener('click', () => {
+  launchMindElixir(example)
 })

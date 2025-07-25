@@ -8,6 +8,9 @@
       "path": "./packages/import-freemind"
     },
     {
+      "path": "./packages/open-desktop"
+    },
+    {
       "path": "./packages/test-app"
     }
   ]

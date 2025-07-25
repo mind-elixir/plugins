@@ -77,6 +77,21 @@ importers:
         specifier: ^4.5.4
         version: 4.5.4(@types/node@24.0.0)(rollup@4.41.1)(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.0))
 
+  packages/open-desktop:
+    devDependencies:
+      mind-elixir:
+        specifier: 'catalog:'
+        version: 5.0.0-beta.25
+      typescript:
+        specifier: ~5.8.3
+        version: 5.8.3
+      vite:
+        specifier: ^6.3.5
+        version: 6.3.5(@types/node@24.0.0)
+      vite-plugin-dts:
+        specifier: ^4.5.4
+        version: 4.5.4(@types/node@24.0.0)(rollup@4.41.1)(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.0))
+
   packages/test-app:
     dependencies:
       '@mind-elixir/import-freemind':
@@ -85,6 +100,9 @@ importers:
       '@mind-elixir/import-xmind':
         specifier: workspace:*
         version: link:../import-xmind
+      '@mind-elixir/open-desktop':
+        specifier: workspace:*
+        version: link:../open-desktop
       mind-elixir:
         specifier: 'catalog:'
         version: 5.0.0-beta.25

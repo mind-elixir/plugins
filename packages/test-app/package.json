@@ -13,6 +13,7 @@
   "dependencies": {
     "@mind-elixir/import-xmind": "workspace:*",
     "@mind-elixir/import-freemind": "workspace:*",
+    "@mind-elixir/open-desktop": "workspace:*",
     "mind-elixir": "catalog:"
   },
   "devDependencies": {
