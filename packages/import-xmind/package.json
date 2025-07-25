@@ -25,15 +25,15 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@types/node": "^24.0.0",
-    "fast-xml-parser": "^4.5.0",
-    "jszip": "^3.10.1",
-    "mind-elixir": "catalog:"
+    "@types/node": "catalog:",
+    "fast-xml-parser": "catalog:",
+    "jszip": "catalog:"
   },
   "devDependencies": {
-    "typescript": "~5.8.3",
-    "vite": "^6.3.5",
-    "vite-plugin-dts": "^4.5.4"
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:",
+    "mind-elixir": "catalog:"
   },
   "keywords": [
     "xmind",

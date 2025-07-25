@@ -3,3 +3,9 @@ packages:
 
 catalog:
   mind-elixir: ^5.0.0
+  "@types/node": ^24.0.0
+  typescript: ~5.8.3
+  vite: ^6.3.5
+  "vite-plugin-dts": ^4.5.4
+  "fast-xml-parser": ^4.5.0
+  jszip: ^3.10.1

@@ -13,12 +13,12 @@
   "dependencies": {
     "@mind-elixir/import-xmind": "workspace:*",
     "@mind-elixir/import-freemind": "workspace:*",
-    "@mind-elixir/open-desktop": "workspace:*",
-    "mind-elixir": "catalog:"
+    "@mind-elixir/open-desktop": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.0.0",
-    "typescript": "~5.8.3",
-    "vite": "^6.3.5"
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "mind-elixir": "catalog:"
   }
 }
