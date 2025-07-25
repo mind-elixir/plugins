@@ -8,7 +8,8 @@
     "dev": "pnpm -r dev",
     "test": "pnpm -r test",
     "clean": "pnpm -r clean",
-    "check-types": "turbo check-types"
+    "check-types": "turbo check-types",
+    "test-app": "pnpm -F test-app run dev"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.5",
