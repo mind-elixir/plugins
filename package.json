@@ -7,7 +7,8 @@
     "build": "pnpm -r build",
     "dev": "pnpm -r dev",
     "test": "pnpm -r test",
-    "clean": "pnpm -r clean"
+    "clean": "pnpm -r clean",
+    "check-types": "turbo check-types"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.5",

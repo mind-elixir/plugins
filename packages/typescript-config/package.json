@@ -1,0 +1,12 @@
+{
+  "name": "@mind-elixir/typescript-config",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Shared TypeScript configuration for Mind Elixir monorepo",
+  "main": "index.js",
+  "files": [
+    "base.json",
+    "library.json",
+    "app.json"
+  ]
+}

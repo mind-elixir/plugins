@@ -6,9 +6,27 @@ settings:
 
 catalogs:
   default:
+    '@types/node':
+      specifier: ^24.0.0
+      version: 24.0.0
+    fast-xml-parser:
+      specifier: ^4.5.0
+      version: 4.5.3
+    jszip:
+      specifier: ^3.10.1
+      version: 3.10.1
     mind-elixir:
       specifier: ^5.0.0
       version: 5.0.0-beta.25
+    typescript:
+      specifier: ~5.8.3
+      version: 5.8.3
+    vite:
+      specifier: ^6.3.5
+      version: 6.3.5
+    vite-plugin-dts:
+      specifier: ^4.5.4
+      version: 4.5.4
 
 importers:
 
@@ -33,63 +51,72 @@ importers:
   packages/import-freemind:
     dependencies:
       '@types/node':
-        specifier: ^24.0.0
+        specifier: 'catalog:'
         version: 24.0.0
       fast-xml-parser:
-        specifier: ^4.5.0
+        specifier: 'catalog:'
         version: 4.5.3
+    devDependencies:
+      '@mind-elixir/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       mind-elixir:
         specifier: 'catalog:'
         version: 5.0.0-beta.25
-    devDependencies:
       typescript:
-        specifier: ~5.8.3
+        specifier: 'catalog:'
         version: 5.8.3
       vite:
-        specifier: ^6.3.5
+        specifier: 'catalog:'
         version: 6.3.5(@types/node@24.0.0)
       vite-plugin-dts:
-        specifier: ^4.5.4
+        specifier: 'catalog:'
         version: 4.5.4(@types/node@24.0.0)(rollup@4.41.1)(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.0))
 
   packages/import-xmind:
     dependencies:
       '@types/node':
-        specifier: ^24.0.0
+        specifier: 'catalog:'
         version: 24.0.0
       fast-xml-parser:
-        specifier: ^4.5.0
+        specifier: 'catalog:'
         version: 4.5.3
       jszip:
-        specifier: ^3.10.1
+        specifier: 'catalog:'
         version: 3.10.1
+    devDependencies:
+      '@mind-elixir/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       mind-elixir:
         specifier: 'catalog:'
         version: 5.0.0-beta.25
-    devDependencies:
       typescript:
-        specifier: ~5.8.3
+        specifier: 'catalog:'
         version: 5.8.3
       vite:
-        specifier: ^6.3.5
+        specifier: 'catalog:'
         version: 6.3.5(@types/node@24.0.0)
       vite-plugin-dts:
-        specifier: ^4.5.4
+        specifier: 'catalog:'
         version: 4.5.4(@types/node@24.0.0)(rollup@4.41.1)(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.0))
 
   packages/open-desktop:
     devDependencies:
+      '@mind-elixir/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       mind-elixir:
         specifier: 'catalog:'
         version: 5.0.0-beta.25
       typescript:
-        specifier: ~5.8.3
+        specifier: 'catalog:'
         version: 5.8.3
       vite:
-        specifier: ^6.3.5
+        specifier: 'catalog:'
         version: 6.3.5(@types/node@24.0.0)
       vite-plugin-dts:
-        specifier: ^4.5.4
+        specifier: 'catalog:'
         version: 4.5.4(@types/node@24.0.0)(rollup@4.41.1)(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.0))
 
   packages/test-app:
@@ -103,19 +130,24 @@ importers:
       '@mind-elixir/open-desktop':
         specifier: workspace:*
         version: link:../open-desktop
+    devDependencies:
+      '@mind-elixir/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.0.0
       mind-elixir:
         specifier: 'catalog:'
         version: 5.0.0-beta.25
-    devDependencies:
-      '@types/node':
-        specifier: ^24.0.0
-        version: 24.0.0
       typescript:
-        specifier: ~5.8.3
+        specifier: 'catalog:'
         version: 5.8.3
       vite:
-        specifier: ^6.3.5
+        specifier: 'catalog:'
         version: 6.3.5(@types/node@24.0.0)
+
+  packages/typescript-config: {}
 
 packages:
 
