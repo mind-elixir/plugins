@@ -1,0 +1,49 @@
+{
+  "name": "@mind-elixir/export-mindmap",
+  "private": false,
+  "version": "0.0.3",
+  "type": "module",
+  "description": "Download mindmap file",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite build --watch",
+    "clean": "rm -rf dist",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ssshooter/modern-screenshot": "^4.5.0",
+    "@types/node": "catalog:",
+    "fast-xml-parser": "catalog:",
+    "jszip": "catalog:"
+  },
+  "devDependencies": {
+    "@mind-elixir/typescript-config": "workspace:*",
+    "mind-elixir": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:"
+  },
+  "keywords": [
+    "xmind",
+    "mindmap",
+    "mind-elixir",
+    "import"
+  ],
+  "author": "Mind Elixir",
+  "license": "MIT"
+}

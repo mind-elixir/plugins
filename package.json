@@ -9,7 +9,7 @@
     "test": "pnpm -r test",
     "clean": "pnpm -r clean",
     "check-types": "turbo check-types",
-    "test-app": "pnpm -F test-app run dev"
+    "test-app": "turbo dev --filter=@mind-elixir/test-app"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.5",
