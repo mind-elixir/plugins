@@ -1,331 +1,126 @@
-# MindElixir Import Monorepo
+# MindElixir Plugins Monorepo
 
-这是一个基于 pnpm workspace 的 monorepo，包含了 XMind 和 FreeMind 文件导入到 MindElixir 格式的功能包。
+一个基于 pnpm workspace 的 monorepo，提供 MindElixir 思维导图的扩展功能包，包括文件导入、导出和桌面应用支持。
 
-## 项目结构
+## 📦 包概览
+
+| 包名 | 版本 | 描述 |
+|------|------|------|
+| [@mind-elixir/import-xmind](./packages/import-xmind) | ![npm](https://img.shields.io/npm/v/@mind-elixir/import-xmind) | XMind 文件导入功能 |
+| [@mind-elixir/import-freemind](./packages/import-freemind) | ![npm](https://img.shields.io/npm/v/@mind-elixir/import-freemind) | FreeMind 文件导入功能 |
+| [@mind-elixir/export-mindmap](./packages/export-mindmap) | ![npm](https://img.shields.io/npm/v/@mind-elixir/export-mindmap) | 思维导图导出功能 |
+| [@mind-elixir/open-desktop](./packages/open-desktop) | ![npm](https://img.shields.io/npm/v/@mind-elixir/open-desktop) | 桌面应用支持 |
+| [test-app](./packages/test-app) | - | 功能测试应用 |
+
+## 🏗️ 项目结构
 
 ```
+├── .changeset/                # 版本管理配置
 ├── packages/
 │   ├── import-xmind/          # XMind 导入包
 │   ├── import-freemind/       # FreeMind 导入包
-│   └── test-app/              # 测试应用
-├── package.json               # 根目录配置
-├── pnpm-workspace.yaml        # pnpm workspace 配置
-└── tsconfig.json              # TypeScript 项目引用配置
+│   ├── export-mindmap/        # 导出功能包
+│   ├── open-desktop/          # 桌面应用包
+│   ├── test-app/              # 测试应用
+│   └── typescript-config/     # 共享 TS 配置
+├── sample/                    # 示例文件
+├── package.json               # 根配置
+├── pnpm-workspace.yaml        # workspace 配置
+├── turbo.json                 # 构建配置
+└── tsconfig.json              # TS 项目引用
 ```
 
-## 包说明
-
-### @mind-elixir/import-xmind
-XMind 文件导入功能包，支持：
-- Modern XMind files (JSON format)
-- Legacy XMind files (XML format)
-
-### @mind-elixir/import-freemind
-FreeMind 文件导入功能包，支持：
-- FreeMind MM files (XML format)
-
-## 开发指南
+## 🚀 快速开始
 
 ### 安装依赖
 
 ```bash
+# 克隆仓库
+git clone <repository-url>
+cd plugins
+
+# 安装所有依赖
 pnpm install
 ```
 
-### 构建所有包
+### 开发工作流
 
 ```bash
+# 构建所有包
 pnpm build
+
+# 开发模式（监听文件变化）
+pnpm dev
+
+# 运行测试
+pnpm test
+
+# 代码检查
+pnpm lint
+
+# 启动测试应用
+pnpm --filter test-app dev
 ```
 
-### 开发模式
+### 包管理
 
 ```bash
-# 启动测试应用
-cd packages/test-app
-pnpm dev
+# 为特定包添加依赖
+pnpm --filter @mind-elixir/import-xmind add <dependency>
+
+# 构建特定包
+pnpm --filter @mind-elixir/import-xmind build
+
+# 发布包（使用 changeset）
+pnpm changeset
+pnpm changeset version
+pnpm publish -r
 ```
 
-### 单独使用包
+## 📖 使用包
 
 ```bash
 # 安装 XMind 导入包
-pnpm add @mind-elixir/import-xmind
+npm install @mind-elixir/import-xmind
 
 # 安装 FreeMind 导入包
-pnpm add @mind-elixir/import-freemind
+npm install @mind-elixir/import-freemind
+
+# 安装导出功能包
+npm install @mind-elixir/export-mindmap
 ```
 
-## Usage
+## 📚 文档
 
-### Basic Usage
+详细的使用说明请参考各个包的 README 文件：
 
-#### XMind Files
+- [XMind 导入包](./packages/import-xmind/README.md) - XMind 文件导入功能
+- [FreeMind 导入包](./packages/import-freemind/README.md) - FreeMind 文件导入功能
+- [导出功能包](./packages/export-mindmap/README.md) - 思维导图导出功能
+- [桌面应用包](./packages/open-desktop/README.md) - 桌面应用支持
+- [测试应用](./packages/test-app/README.md) - 功能测试和演示
 
-```typescript
-import {
-  importXMindFile,
-  convertXmindToMindElixir,
-} from "@mind-elixir/import-xmind";
-import MindElixir from "mind-elixir";
+## 🛠️ 技术栈
 
-// Import XMind file
-const fileInput = document.getElementById("fileInput") as HTMLInputElement;
-const file = fileInput.files[0];
+- **构建工具**: Vite + TypeScript
+- **包管理**: pnpm workspace
+- **版本管理**: Changeset
+- **构建系统**: Turbo
+- **代码规范**: ESLint + Prettier
 
-try {
-  // Parse XMind file
-  const sheets = await importXMindFile(file);
+### 开发规范
 
-  // Convert to MindElixir format
-  const mindElixirData = convertXmindToMindElixir(sheets[0]);
+- 遵循现有的代码风格
+- 为新功能添加测试
+- 更新相关文档
+- 使用 `pnpm changeset` 记录变更
 
-  // Initialize MindElixir
-  const mind = new MindElixir({
-    el: "#map",
-    direction: MindElixir.SIDE,
-  });
+## 📄 许可证
 
-  mind.init(mindElixirData);
-} catch (error) {
-  console.error("Failed to import XMind file:", error);
-}
-```
+MIT License - 详见 [LICENSE](./LICENSE) 文件
 
-#### FreeMind Files
+## 🔗 相关项目
 
-```typescript
-import {
-  importFreeMindFile,
-} from "@mind-elixir/import-xmind";
-import MindElixir from "mind-elixir";
-
-// Import FreeMind MM file
-const fileInput = document.getElementById("fileInput") as HTMLInputElement;
-const file = fileInput.files[0];
-
-try {
-  // Parse FreeMind file (returns MindElixir data directly with FreeMind theme)
-  const mindElixirData = await importFreeMindFile(file);
-
-  // Initialize MindElixir
-  const mind = new MindElixir({
-    el: "#map",
-    direction: MindElixir.SIDE,
-    theme: mindElixirData.theme, // Apply FreeMind Classic theme
-  });
-
-  mind.init(mindElixirData);
-} catch (error) {
-  console.error("Failed to import FreeMind file:", error);
-}
-```
-
-### Advanced Usage
-
-```typescript
-import {
-  importXMindFile,
-  convertXmindToMindElixir,
-} from "@mind-elixir/import-xmind";
-
-// Handle multiple sheets
-const sheets = await importXMindFile(file);
-
-sheets.forEach((sheet, index) => {
-  console.log(`Sheet ${index + 1}: ${sheet.title}`);
-
-  const mindElixirData = convertXmindToMindElixir(sheet);
-
-  // Process each sheet as needed
-  // You can create multiple MindElixir instances or switch between sheets
-});
-```
-
-## API Reference
-
-### `importXMindFile(file: File): Promise<Sheet[]>`
-
-Imports an XMind file and returns an array of sheets.
-
-**Parameters:**
-
-- `file`: The XMind file to import (File object)
-
-**Returns:**
-
-- `Promise<Sheet[]>`: Array of parsed sheets from the XMind file
-
-**Throws:**
-
-- Error if the file is not a valid XMind file
-- Error if the file cannot be parsed
-
-### `convertXmindToMindElixir(sheet: Sheet): MindElixirData`
-
-Converts a single XMind sheet to MindElixir format.
-
-**Parameters:**
-
-- `sheet`: A sheet object from the imported XMind file
-
-**Returns:**
-
-- `MindElixirData`: Data structure compatible with MindElixir
-
-### `importFreeMindFile(file: File): Promise<MindElixirData>`
-
-Imports a FreeMind MM file and returns MindElixir data directly.
-
-**Parameters:**
-
-- `file`: The FreeMind MM file to import (File object)
-
-**Returns:**
-
-- `Promise<MindElixirData>`: Data structure compatible with MindElixir
-
-**Throws:**
-
-- Error if the file is not a valid FreeMind MM file
-- Error if the file cannot be parsed
-
-## Supported Features
-
-### XMind Features
-
-### ✅ Fully Supported
-
-- **Topics and Subtopics**: Complete hierarchy preservation
-- **Text Styling**: Font size, color, weight, family
-- **Background Colors**: Node background colors and fills
-- **Borders**: Border width, color, and style
-- **Notes**: Plain text notes attached to topics
-- **Hyperlinks**: External and internal links
-- **Images**: Embedded images with size information
-- **Labels/Tags**: Topic labels and tags
-- **Relationships**: Arrows and connections between topics
-- **Summaries**: Topic summaries and ranges
-- **Folding State**: Expanded/collapsed state of branches
-
-### ❌ Not Supported
-
-- **Detached Topics**: Topics not attached to the main tree
-- **Attachments**: File attachments
-- **Themes**: Basic theme conversion (colors and styles)
-- **Markers**: Limited marker support
-- **Boundaries**: Basic boundary support
-
-### FreeMind Features
-
-#### ✅ Fully Supported
-
-- **Nodes and Subnodes**: Complete hierarchy preservation
-- **Text Content**: Node text from TEXT attribute and rich content
-- **Font Styling**: Font family, size, bold, italic
-- **Colors**: Text color and background color
-- **Borders**: Edge styling with color, width, and style
-- **Cloud Styling**: Converted to rounded dashed borders
-- **Notes**: Rich content notes (HTML to plain text conversion)
-- **Hyperlinks**: External links
-- **Icons**: Converted to tags/labels
-- **Folding State**: Expanded/collapsed state
-- **Arrow Links**: Connections between nodes
-- **Classic Theme**: Automatic FreeMind-style theme application
-- **HTML Processing**: Automatic extraction of text from HTML richcontent
-
-#### ❌ Not Supported
-
-- **Hooks/Plugins**: FreeMind-specific extensions
-- **Attributes**: Custom node attributes
-- **Complex Rich Content**: Advanced HTML formatting (only plain text is extracted)
-- **Positioning**: Absolute positioning information
-
-## Development
-
-### Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/mind-elixir/import-xmind
-cd import-xmind
-
-# Install dependencies
-pnpm install
-
-# Start development server
-pnpm dev
-```
-
-### Build
-
-```bash
-# Build for production
-pnpm build
-
-# Build and publish
-pnpm bnp
-```
-
-### Testing
-
-Open `index.html` in your browser and use the file input to test XMind file imports.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-MIT License - see LICENSE file for details.
-
-## Related Projects
-
-- [MindElixir](https://github.com/ssshooter/mind-elixir-core) - The mind mapping library this package integrates with
-- [XMind](https://www.xmind.net/) - The mind mapping software that creates .xmind files
-
-## Changelog
-
-### 1.0.7
-
-- Fixed richcontent processing error: "find is not a function"
-- Simplified richcontent handling to support only the standard format
-- Updated type definitions to reflect actual richcontent structure
-- Removed unnecessary compatibility code for old formats
-
-### 1.0.6
-
-- Updated richcontent processing to handle new XML parser format
-- Support for `#text` attribute in richcontent elements
-- Improved compatibility with different FreeMind file formats
-- Enhanced HTML text extraction from richcontent
-
-### 1.0.5
-
-- Improved HTML content processing in richcontent elements
-- Used `stopNodes` option to preserve original HTML structure
-- Enhanced text extraction from HTML richcontent (both NODE and NOTE types)
-- Better handling of complex HTML formatting in FreeMind files
-
-### 1.0.4
-
-- Added FreeMind Classic theme that automatically applies when importing MM files
-- Root nodes use classic yellow background (#ffff99)
-- Main branches use blue background (#99ccff)
-- Sub-nodes use green background (#99ff99)
-- Fixed root node array handling issue
-
-### 1.0.3
-
-- Added FreeMind MM format support
-- New `importFreeMindFile` function for direct FreeMind import
-- Support for FreeMind-specific features (fonts, edges, clouds, icons, arrows)
-- Updated test page to support both XMind and FreeMind files
-
-### 1.0.0
-
-- Initial release
-- Support for both JSON and XML XMind formats
-- Complete style and content conversion
-- TypeScript support
+- [MindElixir](https://github.com/ssshooter/mind-elixir-core) - 核心思维导图库
+- [XMind](https://www.xmind.net/) - XMind 思维导图软件
+- [FreeMind](http://freemind.sourceforge.net/) - FreeMind 思维导图软件
