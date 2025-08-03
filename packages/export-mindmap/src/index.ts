@@ -102,6 +102,6 @@ export const downloadMethodList = [
     type: "Markdown",
     download: downloadMarkdown,
   },
-];
+] as const;
 
 export { convertToHtml, convertToMd };
