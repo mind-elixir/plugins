@@ -165,3 +165,8 @@ MIT License
 - 支持启动 Mind Elixir Desktop 应用
 - 支持传输思维导图数据
 - 智能回退机制
+
+### 0.0.2
+
+- 导出 openAppWithFallback 方法，可以直接打开地址（无其他操作）
+- launchMindElixir 重命名为 launchAndCreateMindmap

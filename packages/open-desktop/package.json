@@ -1,7 +1,7 @@
 {
   "name": "@mind-elixir/open-desktop",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "description": "Import XMind files to MindElixir format",
   "main": "./dist/index.js",

@@ -2,7 +2,7 @@ import type {
   MindElixirData
 } from "mind-elixir";
 
-function openAppWithFallback(url: string) {
+export function openAppWithFallback(url: string) {
   return new Promise((resolve, reject) => {
     const now = Date.now();
 
@@ -108,3 +108,5 @@ export const launchMindElixir = async (
 
   console.log('思维导图已成功发送到 Mind Elixir')
 }
+
+export const launchAndCreateMindmap = launchMindElixir
