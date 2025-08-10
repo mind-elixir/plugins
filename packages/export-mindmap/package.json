@@ -1,7 +1,7 @@
 {
   "name": "@mind-elixir/export-mindmap",
   "private": false,
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "description": "Download mindmap file",
   "main": "./dist/index.js",
@@ -11,9 +11,9 @@
   },
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.umd.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.umd.cjs"
     }
   },
   "files": [

@@ -9,7 +9,14 @@ const methodMap = {
   webp: domToWebp,
 };
 
-export const downloadImage = async (
+export const downloadUrl = async (url: string, fileName: string) => {
+  const link = document.createElement("a");
+  link.download = fileName;
+  link.href = url;
+  link.click();
+}
+
+export const exportImage = async (
   mei: MindElixirInstance,
   format: "png" | "jpeg" | "webp"
 ) => {
@@ -31,45 +38,89 @@ export const downloadImage = async (
     padding: 300,
     quality: format === "png" ? 1 : 0.7,
   });
-  const link = document.createElement("a");
-  link.download = mei.nodeData.topic + "." + format;
-  link.href = dataUrl;
-  link.click();
   mei.map.style.transition = "transform 0.3s";
   mei.scale(tmp);
+  return dataUrl
 };
 
-export const downloadHtml = (mei: MindElixirInstance) => {
+export const downloadImage = async (
+  mei: MindElixirInstance,
+  format: "png" | "jpeg" | "webp"
+) => {
+  const url = await exportImage(mei, format);
+  downloadUrl(url, mei.nodeData.topic + "." + format);
+};
+
+export const exportHtml = (mei: MindElixirInstance) => {
   const data = mei.getData();
   const html = convertToHtml(data);
   const blob = new Blob([html], { type: "text/html" });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.download = mei.nodeData.topic + ".html";
-  link.href = url;
-  link.click();
+  return url
 };
 
-export const downloadJson = (mei: MindElixirInstance) => {
+export const downloadHtml = (mei: MindElixirInstance) => {
+  const url = exportHtml(mei);
+  downloadUrl(url, mei.nodeData.topic + ".html");
+};
+
+export const exportJson = (mei: MindElixirInstance) => {
   const data = mei.getData();
   const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.download = mei.nodeData.topic + ".json";
-  link.href = url;
-  link.click();
+  return url;
 };
 
-export const downloadMarkdown = (mei: MindElixirInstance) => {
+export const downloadJson = (mei: MindElixirInstance) => {
+  const url = exportJson(mei);
+  downloadUrl(url, mei.nodeData.topic + ".json");
+};
+
+export const exportMarkdown = (mei: MindElixirInstance) => {
   const data = mei.getData();
   const md = convertToMd(data.nodeData);
   const blob = new Blob([md], { type: "text/markdown" });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.download = mei.nodeData.topic + ".md";
-  link.href = url;
-  link.click();
+  return url;
 };
+
+export const downloadMarkdown = (mei: MindElixirInstance) => {
+  const url = exportMarkdown(mei);
+  downloadUrl(url, mei.nodeData.topic + ".md");
+};
+
+export const exportMethodList = [
+  {
+    type: "HTML",
+    export: exportHtml,
+  },
+  {
+    type: "JSON",
+    export: exportJson,
+  },
+  {
+    type: "PNG",
+    export(mei: MindElixirInstance) {
+      return exportImage(mei, "png");
+    },
+  },
+  {
+    type: "JPEG",
+    export(mei: MindElixirInstance) {
+      return exportImage(mei, "jpeg");
+    },
+  },
+  {
+    type: "WEBP",
+    export(mei: MindElixirInstance) {
+      return exportImage(mei, "webp");
+    },
+  },
+  {
+    type: "Markdown",
+    export: exportMarkdown,
+  },
+] as const;
 
 export const downloadMethodList = [
   {
