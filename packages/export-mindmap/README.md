@@ -1,13 +1,6 @@
 # @mind-elixir/export-mindmap
 
-一个用于导出 Mind Elixir 思维导图的插件包，支持多种格式的导出功能。
-
-## 功能特性
-
-- 🖼️ **图片导出**: 支持 PNG、JPEG、WEBP 格式
-- 📄 **文档导出**: 支持 HTML、Markdown、JSON 格式
-- 🎨 **高质量输出**: 图片导出支持高分辨率和自定义质量
-- 🔧 **易于使用**: 简单的 API 接口，一行代码完成导出
+Mind Elixir 思维导图导出插件，支持图片、HTML、JSON、Markdown 格式导出。
 
 ## 安装
 
@@ -17,168 +10,100 @@ npm install @mind-elixir/export-mindmap
 
 ## 使用方法
 
-### 基础用法
+### 直接下载
 
 ```javascript
-import { downloadImage, downloadHtml, downloadJson, downloadMarkdown, downloadMethodList } from '@mind-elixir/export-mindmap'
+import {
+  downloadImage,
+  downloadHtml,
+  downloadJson,
+  downloadMarkdown,
+} from '@mind-elixir/export-mindmap'
 
-// 假设你已经有一个 MindElixir 实例
-const mindElixir = new MindElixir({
-  el: '#mind-elixir',
-  // 其他配置...
-})
+// 导出图片
+await downloadImage(mindElixir, 'png') // 支持 'png' | 'jpeg' | 'webp'
 
-// 导出为 PNG 图片
-await downloadImage(mindElixir, 'png')
-
-// 导出为 HTML 文件
+// 导出文档
 downloadHtml(mindElixir)
-
-// 导出为 JSON 文件
 downloadJson(mindElixir)
-
-// 导出为 Markdown 文件
 downloadMarkdown(mindElixir)
 ```
 
-### 使用预定义的导出方法列表
+### 获取导出 URL（不直接下载）
 
 ```javascript
-import { downloadMethodList } from '@mind-elixir/export-mindmap'
+import {
+  exportImage,
+  exportHtml,
+  exportJson,
+  exportMarkdown,
+} from '@mind-elixir/export-mindmap'
 
-// 获取所有可用的导出方法
-console.log(downloadMethodList)
-// [
-//   { type: "HTML", download: downloadHtml },
-//   { type: "JSON", download: downloadJson },
-//   { type: "PNG", download: (mei) => downloadImage(mei, 'png') },
-//   { type: "JPEG", download: (mei) => downloadImage(mei, 'jpeg') },
-//   { type: "WEBP", download: (mei) => downloadImage(mei, 'webp') },
-//   { type: "Markdown", download: downloadMarkdown }
-// ]
-
-// 使用特定的导出方法
-downloadMethodList[0].download(mindElixir) // 导出 HTML
+// 获取导出URL，可用于预览或自定义处理
+const imageUrl = await exportImage(mindElixir, 'png')
+const htmlUrl = exportHtml(mindElixir)
+const jsonUrl = exportJson(mindElixir)
+const markdownUrl = exportMarkdown(mindElixir)
 ```
 
-## API 参考
+### 批量导出
 
-### downloadImage(mei, format)
+```javascript
+import {
+  downloadMethodList,
+  exportMethodList,
+} from '@mind-elixir/export-mindmap'
 
-导出思维导图为图片格式。
+// 直接下载所有格式
+downloadMethodList.forEach(({ type, download }) => {
+  console.log(`导出 ${type}`)
+  download(mindElixir)
+})
 
-**参数:**
-
-- `mei` (MindElixirInstance): Mind Elixir 实例
-- `format` ('png' | 'jpeg' | 'webp'): 图片格式
-
-**返回值:** Promise\<void\>
-
-**特性:**
-
-- 自动调整缩放比例为 1:1 以确保最佳质量
-- PNG 格式使用无损压缩 (quality: 1)
-- JPEG 和 WEBP 格式使用 70% 质量压缩
-- 包含 300px 的内边距
-- 保持原有的主题背景色
-
-### downloadHtml(mei)
-
-导出思维导图为独立的 HTML 文件。
-
-**参数:**
-
-- `mei` (MindElixirInstance): Mind Elixir 实例
-
-**特性:**
-
-- 生成完全独立的 HTML 文件
-- 包含 Mind Elixir Lite 运行时
-- 禁用编辑、拖拽和右键菜单功能
-- 适合分享和展示
-
-### downloadJson(mei)
-
-导出思维导图数据为 JSON 格式。
-
-**参数:**
-
-- `mei` (MindElixirInstance): Mind Elixir 实例
-
-**特性:**
-
-- 导出完整的思维导图数据结构
-- 可用于备份或在其他应用中导入
-
-### downloadMarkdown(mei)
-
-导出思维导图为 Markdown 格式。
-
-**参数:**
-
-- `mei` (MindElixirInstance): Mind Elixir 实例
-
-**特性:**
-
-- 使用缩进列表格式
-- 保持层级结构
-- 兼容标准 Markdown 语法
-
-### downloadMethodList
-
-预定义的导出方法数组，包含所有可用的导出选项。
-
-**类型:**
-
-```typescript
-Array<{
-  type: string
-  download: (mei: MindElixirInstance) => void | Promise<void>
-}>
+// 获取所有格式的URL
+const urls = await Promise.all(
+  exportMethodList.map(async ({ type, export: exportFn }) => ({
+    type,
+    url: await exportFn(mindElixir),
+  }))
+)
 ```
 
-## 转换工具
+## API
 
-### convertToHtml(data)
+### 下载函数
 
-将 Mind Elixir 数据转换为 HTML 字符串。
+- `downloadImage(mei, format)` - 下载图片
+- `downloadHtml(mei)` - 下载 HTML 文件
+- `downloadJson(mei)` - 下载 JSON 文件
+- `downloadMarkdown(mei)` - 下载 Markdown 文件
 
-**参数:**
+### 导出函数（返回 URL）
 
-- `data` (MindElixirData): Mind Elixir 数据对象
+- `exportImage(mei, format)` - 返回图片 URL
+- `exportHtml(mei)` - 返回 HTML URL
+- `exportJson(mei)` - 返回 JSON URL
+- `exportMarkdown(mei)` - 返回 Markdown URL
 
-**返回值:** string
+### 工具函数
 
-### convertToMd(data, highlight?)
+- `downloadUrl(url, fileName)` - 通用下载函数
+- `convertToHtml(data)` - 数据转 HTML
+- `convertToMd(data)` - 数据转 Markdown
 
-将 Mind Elixir 节点数据转换为 Markdown 字符串。
+### 预定义列表
 
-**参数:**
+- `downloadMethodList` - 下载方法列表
+- `exportMethodList` - 导出方法列表
 
-- `data` (NodeObj): 节点数据对象
-- `highlight` (NodeObj, 可选): 需要高亮的节点
+## 特性
 
-**返回值:** string
-
-## 依赖项
-
-- `@ssshooter/modern-screenshot`: 用于高质量的 DOM 截图
-- `mind-elixir`: Mind Elixir 核心库
-
-## 浏览器兼容性
-
-- Chrome/Edge 88+
-- Firefox 90+
-- Safari 14+
+- 🖼️ 高质量图片导出（PNG/JPEG/WEBP）
+- 📄 完整 HTML 文件（包含运行时）
+- 📝 标准 Markdown 格式
+- 💾 完整 JSON 数据
+- 🔧 支持导出/下载分离
 
 ## 许可证
 
 MIT
-
-## 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-## 更新日志
-
-查看 [CHANGELOG.md](./CHANGELOG.md) 了解版本更新信息。
