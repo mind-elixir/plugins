@@ -1,5 +1,11 @@
 # @mind-elixir/download-file
 
+## 0.0.5
+
+### Minor Changes
+
+- All export functions now return blob URLs
+
 ## 0.0.4
 
 ### Minor Changes
