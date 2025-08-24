@@ -1,25 +1,25 @@
 import { MindElixirInstance } from "mind-elixir";
 import { convertToHtml } from "./html";
 import { convertToMd } from "./markdown";
-import { domToBlob } from "@ssshooter/modern-screenshot";
-
+import { domToBlob, Options } from "@ssshooter/modern-screenshot";
 
 export const downloadUrl = async (url: string, fileName: string) => {
   const link = document.createElement("a");
   link.download = fileName;
   link.href = url;
   link.click();
-}
+};
 
 export const exportImage = async (
   mei: MindElixirInstance,
-  format: "png" | "jpeg" | "webp"
+  format: "png" | "jpeg" | "webp",
+  options?: Options
 ) => {
   const tmp = mei.scaleVal;
   mei.map.style.transition = "none";
   mei.scale(1);
   const blob = await domToBlob(mei.nodes, {
-    type: 'image/' + format,
+    type: "image/" + format,
     onCloneNode: (node) => {
       const n = node as HTMLDivElement;
       n.style.position = "";
@@ -33,11 +33,11 @@ export const exportImage = async (
     },
     padding: 300,
     quality: format === "png" ? 1 : 0.7,
+    ...options,
   });
   mei.map.style.transition = "transform 0.3s";
   mei.scale(tmp);
   return URL.createObjectURL(blob);
-
 };
 
 export const downloadImage = async (
@@ -53,7 +53,7 @@ export const exportHtml = (mei: MindElixirInstance) => {
   const html = convertToHtml(data);
   const blob = new Blob([html], { type: "text/html" });
   const url = URL.createObjectURL(blob);
-  return url
+  return url;
 };
 
 export const downloadHtml = (mei: MindElixirInstance) => {
@@ -97,20 +97,20 @@ export const exportMethodList = [
   },
   {
     type: "PNG",
-    export(mei: MindElixirInstance) {
-      return exportImage(mei, "png");
+    export(mei: MindElixirInstance, options?: Options) {
+      return exportImage(mei, "png", options);
     },
   },
   {
     type: "JPEG",
-    export(mei: MindElixirInstance) {
-      return exportImage(mei, "jpeg");
+    export(mei: MindElixirInstance, options?: Options) {
+      return exportImage(mei, "jpeg", options);
     },
   },
   {
     type: "WEBP",
-    export(mei: MindElixirInstance) {
-      return exportImage(mei, "webp");
+    export(mei: MindElixirInstance, options?: Options) {
+      return exportImage(mei, "webp", options);
     },
   },
   {
