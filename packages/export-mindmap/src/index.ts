@@ -152,4 +152,4 @@ export const downloadMethodList = [
   },
 ] as const;
 
-export { convertToHtml, convertToMd };
+export { convertToHtml, convertToMd, type Options as ImageOptions };
