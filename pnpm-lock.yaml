@@ -48,7 +48,7 @@ importers:
         specifier: ^4.5.4
         version: 4.5.4(@types/node@24.0.0)(rollup@4.41.1)(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.0))
 
-  packages/download-file:
+  packages/export-mindmap:
     dependencies:
       '@ssshooter/modern-screenshot':
         specifier: ^4.5.0
@@ -152,6 +152,9 @@ importers:
 
   packages/test-app:
     dependencies:
+      '@mind-elixir/export-mindmap':
+        specifier: workspace:*
+        version: link:../export-mindmap
       '@mind-elixir/import-freemind':
         specifier: workspace:*
         version: link:../import-freemind

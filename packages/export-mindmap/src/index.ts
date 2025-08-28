@@ -21,12 +21,6 @@ export const exportImage = async (
   const blob = await domToBlob(mei.nodes, {
     type: "image/" + format,
     onCloneNode: (node) => {
-      const n = node as HTMLDivElement;
-      n.style.position = "";
-      n.style.top = "";
-      n.style.left = "";
-      n.style.bottom = "";
-      n.style.right = "";
     },
     onCreateForeignObjectSvg: (svg) => {
       svg.style.cssText = `background:${mei.theme.cssVar["--bgcolor"]};`;
