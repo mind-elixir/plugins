@@ -3,6 +3,7 @@ import { importFreeMindFile } from '@mind-elixir/import-freemind'
 import { launchMindElixir } from '@mind-elixir/open-desktop'
 import { downloadMethodList } from '@mind-elixir/export-mindmap'
 import MindElixir from 'mind-elixir'
+import 'mind-elixir/style.css'
 import example from 'mind-elixir/example'
 
 // 创建MindElixir实例

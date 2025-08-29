@@ -1,7 +1,8 @@
 import { MindElixirInstance } from "mind-elixir";
 import { convertToHtml } from "./html";
 import { convertToMd } from "./markdown";
-import { domToBlob, Options } from "@ssshooter/modern-screenshot";
+import { domToBlob, Options } from "modern-screenshot";
+// import { domToBlob, Options } from "@ssshooter/modern-screenshot";
 
 export const downloadUrl = async (url: string, fileName: string) => {
   const link = document.createElement("a");
@@ -15,22 +16,23 @@ export const exportImage = async (
   format: "png" | "jpeg" | "webp",
   options?: Options
 ) => {
-  const tmp = mei.scaleVal;
-  mei.map.style.transition = "none";
-  mei.scale(1);
+  const height = mei.nodes.offsetHeight;
+  const width = mei.nodes.offsetWidth;
   const blob = await domToBlob(mei.nodes, {
+    height,
+    width,
     type: "image/" + format,
     onCloneNode: (node) => {
+      const n = node as HTMLElement;
+      n.style.transform = "none";
+      n.style.transformOrigin = "";
     },
     onCreateForeignObjectSvg: (svg) => {
       svg.style.cssText = `background:${mei.theme.cssVar["--bgcolor"]};`;
     },
-    padding: 300,
     quality: format === "png" ? 1 : 0.7,
     ...options,
   });
-  mei.map.style.transition = "transform 0.3s";
-  mei.scale(tmp);
   return URL.createObjectURL(blob);
 };
 

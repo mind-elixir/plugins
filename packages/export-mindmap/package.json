@@ -29,7 +29,8 @@
     "@ssshooter/modern-screenshot": "^4.5.0",
     "@types/node": "catalog:",
     "fast-xml-parser": "catalog:",
-    "jszip": "catalog:"
+    "jszip": "catalog:",
+    "modern-screenshot": "^4.6.6"
   },
   "devDependencies": {
     "@mind-elixir/typescript-config": "workspace:*",
