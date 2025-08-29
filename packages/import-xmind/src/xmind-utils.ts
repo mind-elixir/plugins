@@ -7,10 +7,10 @@ import type {
   Style,
   Theme as XMindTheme,
 } from "./types/xmind-model";
-import type {
-  MindElixirData,
-  NodeObj,
-  Theme as MindElixirTheme,
+import MindElixir, {
+  type MindElixirData,
+  type NodeObj,
+  type Theme as MindElixirTheme,
 } from "mind-elixir";
 
 /**
@@ -109,7 +109,7 @@ export function convertTheme(xmindTheme: XMindTheme): MindElixirTheme {
       "#34495e",
       "#e67e22",
     ], // 默认调色板
-    cssVar: {},
+    cssVar: MindElixir.THEME.cssVar,
   };
 
   // 从XMind主题中提取颜色信息

@@ -6,10 +6,10 @@ import type {
   FreeMindFont,
   FreeMindEdge,
 } from "./types/freemind-model";
-import type {
-  MindElixirData,
-  NodeObj,
-  Theme as MindElixirTheme,
+import MindElixir, {
+  type MindElixirData,
+  type NodeObj,
+  type Theme as MindElixirTheme,
 } from "mind-elixir";
 
 /**
@@ -18,10 +18,9 @@ import type {
 function createFreeMindTheme(): MindElixirTheme {
   return {
     name: "FreeMind Classic",
-    palette: [
-      "#333333",
-    ],
+    palette: ["#333333"],
     cssVar: {
+      ...MindElixir.THEME.cssVar,
       // 根节点样式 - FreeMind经典黄色
       "--root-bgcolor": "#ffffff",
       "--root-color": "#000000",
@@ -39,12 +38,11 @@ function createFreeMindTheme(): MindElixirTheme {
       "--selected": "#0066cc",
 
       // 间距
-      "--gap": "20px",
 
       // 面板样式
       "--panel-bgcolor": "#f5f5f5",
       "--panel-border-color": "#cccccc",
-    }
+    },
   };
 }
 
@@ -62,12 +60,12 @@ function convertFreeMindFont(font: FreeMindFont): any {
     style.fontSize = `${font.SIZE}px`;
   }
 
-  if (font.BOLD === 'true') {
-    style.fontWeight = 'bold';
+  if (font.BOLD === "true") {
+    style.fontWeight = "bold";
   }
 
-  if (font.ITALIC === 'true') {
-    style.fontStyle = 'italic';
+  if (font.ITALIC === "true") {
+    style.fontStyle = "italic";
   }
 
   return style;
@@ -79,9 +77,9 @@ function convertFreeMindFont(font: FreeMindFont): any {
 function convertFreeMindEdge(edge: FreeMindEdge): any {
   const style: any = {};
 
-  const width = edge.WIDTH || '1';
-  const color = edge.COLOR || '#000000';
-  const borderStyle = edge.STYLE || 'solid';
+  const width = edge.WIDTH || "1";
+  const color = edge.COLOR || "#000000";
+  const borderStyle = edge.STYLE || "solid";
 
   style.border = `${width}px ${borderStyle} ${color}`;
 
@@ -121,7 +119,7 @@ function convertFreeMindNodeStyle(node: FreeMindNode): any {
     const cloud = node.cloud[0];
     if (cloud.COLOR) {
       style.border = `2px dashed ${cloud.COLOR}`;
-      style.borderRadius = '15px';
+      style.borderRadius = "15px";
     }
   }
 
@@ -133,18 +131,22 @@ function convertFreeMindNodeStyle(node: FreeMindNode): any {
  */
 function decodeHtmlEntities(text: string): string {
   // 解码常见的HTML实体
-  return text
-    // 数字实体 (如 &#28857; -> 点)
-    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(dec))
-    // 十六进制实体 (如 &#x70B9; -> 点)
-    .replace(/&#x([0-9A-Fa-f]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
-    // 常见命名实体
-    .replace(/&quot;/g, '"')
-    .replace(/&apos;/g, "'")
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(/&nbsp;/g, ' ');
+  return (
+    text
+      // 数字实体 (如 &#28857; -> 点)
+      .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(dec))
+      // 十六进制实体 (如 &#x70B9; -> 点)
+      .replace(/&#x([0-9A-Fa-f]+);/g, (_, hex) =>
+        String.fromCharCode(parseInt(hex, 16))
+      )
+      // 常见命名实体
+      .replace(/&quot;/g, '"')
+      .replace(/&apos;/g, "'")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&")
+      .replace(/&nbsp;/g, " ")
+  );
 }
 
 /**
@@ -152,12 +154,12 @@ function decodeHtmlEntities(text: string): string {
  */
 function extractTextFromHtml(html: any): string {
   // 如果是字符串，直接处理
-  if (typeof html === 'string') {
+  if (typeof html === "string") {
     // 移除HTML标签，保留文本内容
     let text = html
-      .replace(/<[^>]*>/g, ' ') // 替换所有HTML标签为空格
-      .replace(/\s+/g, ' ')     // 将多个空格合并为一个
-      .trim();                  // 去除首尾空格
+      .replace(/<[^>]*>/g, " ") // 替换所有HTML标签为空格
+      .replace(/\s+/g, " ") // 将多个空格合并为一个
+      .trim(); // 去除首尾空格
 
     // 解码HTML实体（如 &#28857; -> 点）
     text = decodeHtmlEntities(text);
@@ -166,12 +168,12 @@ function extractTextFromHtml(html: any): string {
   }
 
   // 如果是对象，转换为JSON字符串后处理
-  if (typeof html === 'object' && html !== null) {
+  if (typeof html === "object" && html !== null) {
     const htmlString = JSON.stringify(html);
     let text = htmlString
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/[{}",]/g, ' ')
-      .replace(/\s+/g, ' ')
+      .replace(/<[^>]*>/g, " ")
+      .replace(/[{}",]/g, " ")
+      .replace(/\s+/g, " ")
       .trim();
 
     // 解码HTML实体
@@ -180,7 +182,7 @@ function extractTextFromHtml(html: any): string {
     return text;
   }
 
-  return '';
+  return "";
 }
 
 /**
@@ -192,13 +194,13 @@ function extractNodeText(node: FreeMindNode): string {
   // 优先使用TEXT属性
   if (node.TEXT) {
     console.log("Found TEXT attribute:", node.TEXT);
-    if (typeof node.TEXT === 'string') {
+    if (typeof node.TEXT === "string") {
       // 解码HTML实体
       const decodedText = decodeHtmlEntities(node.TEXT);
       console.log("Decoded TEXT:", decodedText);
       return decodedText;
-    }else{
-      return node.TEXT
+    } else {
+      return node.TEXT;
     }
   }
 
@@ -207,19 +209,19 @@ function extractNodeText(node: FreeMindNode): string {
     console.log("Looking for richcontent:", node.richcontent);
 
     // richcontent是单个对象，检查TYPE是否为NODE
-    if (node.richcontent.TYPE === 'NODE') {
+    if (node.richcontent.TYPE === "NODE") {
       // 从#text属性中提取HTML字符串
-      if (node.richcontent['#text']) {
-        console.log("Found richcontent #text:", node.richcontent['#text']);
-        const text = extractTextFromHtml(node.richcontent['#text']);
+      if (node.richcontent["#text"]) {
+        console.log("Found richcontent #text:", node.richcontent["#text"]);
+        const text = extractTextFromHtml(node.richcontent["#text"]);
         console.log("Extracted text from richcontent:", text);
-        return text || 'Untitled';
+        return text || "Untitled";
       }
     }
   }
 
   console.log("No text found, using 'Untitled'");
-  return 'Untitled';
+  return "Untitled";
 }
 
 /**
@@ -228,11 +230,11 @@ function extractNodeText(node: FreeMindNode): string {
 function extractNodeNote(node: FreeMindNode): string | undefined {
   if (node.richcontent) {
     // richcontent是单个对象，检查TYPE是否为NOTE
-    if (node.richcontent.TYPE === 'NOTE') {
+    if (node.richcontent.TYPE === "NOTE") {
       // 从#text属性中提取HTML字符串
-      if (node.richcontent['#text']) {
-        console.log("Found note richcontent #text:", node.richcontent['#text']);
-        const noteText = extractTextFromHtml(node.richcontent['#text']);
+      if (node.richcontent["#text"]) {
+        console.log("Found note richcontent #text:", node.richcontent["#text"]);
+        const noteText = extractTextFromHtml(node.richcontent["#text"]);
         console.log("Extracted note text:", noteText);
         return noteText || undefined;
       }
@@ -277,20 +279,25 @@ function convertFreeMindNode(freemindNode: FreeMindNode): NodeObj {
 
   // 转换折叠状态
   if (freemindNode.FOLDED) {
-    mindElixirNode.expanded = freemindNode.FOLDED === 'false';
-    console.log("Set folded state:", freemindNode.FOLDED, "expanded:", mindElixirNode.expanded);
+    mindElixirNode.expanded = freemindNode.FOLDED === "false";
+    console.log(
+      "Set folded state:",
+      freemindNode.FOLDED,
+      "expanded:",
+      mindElixirNode.expanded
+    );
   }
 
   // 转换图标为标签
   if (freemindNode.icon && freemindNode.icon.length > 0) {
-    mindElixirNode.tags = freemindNode.icon.map(icon => icon.BUILTIN);
+    mindElixirNode.tags = freemindNode.icon.map((icon) => icon.BUILTIN);
     console.log("Added tags:", mindElixirNode.tags);
   }
 
   // 转换子节点
   if (freemindNode.node && freemindNode.node.length > 0) {
     console.log("Converting child nodes:", freemindNode.node.length);
-    mindElixirNode.children = freemindNode.node.map(childNode =>
+    mindElixirNode.children = freemindNode.node.map((childNode) =>
       convertFreeMindNode(childNode)
     );
     console.log("Converted children:", mindElixirNode.children);
@@ -310,12 +317,12 @@ function convertFreeMindArrows(freemindNode: FreeMindNode): any[] {
 
   function collectArrows(node: FreeMindNode, nodeId: string) {
     if (node.arrowlink) {
-      node.arrowlink.forEach(arrow => {
+      node.arrowlink.forEach((arrow) => {
         arrows.push({
           id: arrow.ID || Math.random().toString(36).substring(2, 11),
           from: nodeId,
           to: arrow.DESTINATION,
-          label: '-',
+          label: "-",
           delta1: { x: 50, y: 50 },
           delta2: { x: 50, y: 50 },
         });
@@ -323,8 +330,9 @@ function convertFreeMindArrows(freemindNode: FreeMindNode): any[] {
     }
 
     if (node.node) {
-      node.node.forEach(childNode => {
-        const childId = childNode.ID || Math.random().toString(36).substring(2, 11);
+      node.node.forEach((childNode) => {
+        const childId =
+          childNode.ID || Math.random().toString(36).substring(2, 11);
         collectArrows(childNode, childId);
       });
     }
@@ -359,8 +367,18 @@ export async function importFreeMindFile(file: File): Promise<MindElixirData> {
       stopNodes: ["*.richcontent"],
       isArray: (name) => {
         // 指定哪些元素应该始终作为数组处理，包括所有node
-        return ['node', 'arrowlink', 'attribute', 'linktarget', 'cloud', 'edge', 'font', 'hook', 'icon'].includes(name);
-      }
+        return [
+          "node",
+          "arrowlink",
+          "attribute",
+          "linktarget",
+          "cloud",
+          "edge",
+          "font",
+          "hook",
+          "icon",
+        ].includes(name);
+      },
     });
 
     const xmlData = parser.parse(text);
@@ -391,12 +409,11 @@ export async function importFreeMindFile(file: File): Promise<MindElixirData> {
       nodeData: rootNode,
       arrows: convertFreeMindArrows(rootNodeData),
       summaries: [], // FreeMind没有摘要功能
-      theme: createFreeMindTheme()
+      theme: createFreeMindTheme(),
     };
 
     console.log("Final MindElixir data:", mindElixirData);
     return mindElixirData;
-
   } catch (error) {
     console.error("Error importing FreeMind file:", error);
     throw error;
