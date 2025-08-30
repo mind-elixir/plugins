@@ -1,5 +1,11 @@
 # @mind-elixir/download-file
 
+## 0.0.9
+
+### Minor Changes
+
+- No longer need to scale the mind map before exporting
+
 ## 0.0.5
 
 ### Minor Changes
