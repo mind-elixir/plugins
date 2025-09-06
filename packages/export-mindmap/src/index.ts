@@ -27,9 +27,11 @@ export const exportImage = async (
       n.style.transform = "none";
       n.style.transformOrigin = "";
     },
-    onCreateForeignObjectSvg: (svg) => {
-      svg.style.cssText = `background:${mei.theme.cssVar["--bgcolor"]};`;
-    },
+    backgroundColor: mei.theme.cssVar["--bgcolor"],
+    // The implementation below will make the main branch invisible on macOS
+    // onCreateForeignObjectSvg: (svg) => {
+    //   svg.style.cssText = `background:${mei.theme.cssVar["--bgcolor"]};`;
+    // },
     quality: format === "png" ? 1 : 0.7,
     ...options,
   });
