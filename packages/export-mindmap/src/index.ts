@@ -1,5 +1,5 @@
 import { MindElixirInstance } from "mind-elixir";
-import { convertToHtml } from "./html";
+import { convertToHtml, HtmlExportOptions } from "./html";
 import { convertToMd } from "./markdown";
 import { domToBlob, Options } from "modern-screenshot";
 // import { domToBlob, Options } from "@ssshooter/modern-screenshot";
@@ -42,16 +42,16 @@ export const downloadImage = async (
   downloadUrl(url, mei.nodeData.topic + "." + format);
 };
 
-export const exportHtml = (mei: MindElixirInstance) => {
+export const exportHtml = (mei: MindElixirInstance, options?: HtmlExportOptions) => {
   const data = mei.getData();
-  const html = convertToHtml(data);
+  const html = convertToHtml(data, options);
   const blob = new Blob([html], { type: "text/html" });
   const url = URL.createObjectURL(blob);
   return url;
 };
 
-export const downloadHtml = (mei: MindElixirInstance) => {
-  const url = exportHtml(mei);
+export const downloadHtml = (mei: MindElixirInstance, options?: HtmlExportOptions) => {
+  const url = exportHtml(mei, options);
   downloadUrl(url, mei.nodeData.topic + ".html");
 };
 
@@ -83,7 +83,9 @@ export const downloadMarkdown = (mei: MindElixirInstance) => {
 export const exportMethodList = [
   {
     type: "HTML",
-    export: exportHtml,
+    export(mei: MindElixirInstance, options?: HtmlExportOptions) {
+      return exportHtml(mei, options);
+    },
   },
   {
     type: "JSON",
@@ -116,7 +118,9 @@ export const exportMethodList = [
 export const downloadMethodList = [
   {
     type: "HTML",
-    download: downloadHtml,
+    download(mei: MindElixirInstance, options?: HtmlExportOptions) {
+      return downloadHtml(mei, options);
+    },
   },
   {
     type: "JSON",
@@ -146,4 +150,4 @@ export const downloadMethodList = [
   },
 ] as const;
 
-export { convertToHtml, convertToMd, type Options as ImageOptions };
+export { convertToHtml, convertToMd, type Options as ImageOptions, type HtmlExportOptions };
