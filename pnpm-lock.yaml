@@ -16,8 +16,8 @@ catalogs:
       specifier: ^3.10.1
       version: 3.10.1
     mind-elixir:
-      specifier: ^5.0.6
-      version: 5.0.6
+      specifier: ^5.1.1
+      version: 5.1.1
     typescript:
       specifier: ~5.8.3
       version: 5.8.3
@@ -71,7 +71,7 @@ importers:
         version: link:../typescript-config
       mind-elixir:
         specifier: 'catalog:'
-        version: 5.0.6
+        version: 5.1.1
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -96,7 +96,7 @@ importers:
         version: link:../typescript-config
       mind-elixir:
         specifier: 'catalog:'
-        version: 5.0.6
+        version: 5.1.1
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -124,7 +124,7 @@ importers:
         version: link:../typescript-config
       mind-elixir:
         specifier: 'catalog:'
-        version: 5.0.6
+        version: 5.1.1
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -142,7 +142,7 @@ importers:
         version: link:../typescript-config
       mind-elixir:
         specifier: 'catalog:'
-        version: 5.0.6
+        version: 5.1.1
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -176,7 +176,7 @@ importers:
         version: 24.0.0
       mind-elixir:
         specifier: 'catalog:'
-        version: 5.0.6
+        version: 5.1.1
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -944,8 +944,8 @@ packages:
   mind-elixir@4.6.2:
     resolution: {integrity: sha512-KjIjInLbMtW7J68Hm+oJ/+g/fhG+h6kkJkU5HL1LgqLSIyKFQM4V5xogibbqm+9ycBmKu2TTOlE+5O2/3VZPtA==}
 
-  mind-elixir@5.0.6:
-    resolution: {integrity: sha512-1dRpnLC4m+/OAG28MSRL6TnaWvNtnvsEWE0UirbG3YYjWKEFxsnapR0V1Hy+azjmHVHYFHIh8t+rV1OqxTd5dA==}
+  mind-elixir@5.1.1:
+    resolution: {integrity: sha512-Ao5VCby3iqyd80ReErCbb5uZLL7Zs/Nh+GpmmtUCH4WnmRvmlrdz0l3KNha+iHFeTlkxG27MbN9iPyxkTWWrRA==}
 
   minimatch@3.0.8:
     resolution: {integrity: sha512-6FsRAQsxQ61mw+qP1ZzbL9Bc78x2p5OqNgNpnoAFLTrX8n5Kxph0CsnhmKKNXTWjXqU5L0pGPR7hYk+XWZr60Q==}
@@ -2090,7 +2090,7 @@ snapshots:
 
   mind-elixir@4.6.2: {}
 
-  mind-elixir@5.0.6: {}
+  mind-elixir@5.1.1: {}
 
   minimatch@3.0.8:
     dependencies:

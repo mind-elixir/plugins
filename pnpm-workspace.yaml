@@ -2,7 +2,7 @@ packages:
   - 'packages/*'
 
 catalog:
-  mind-elixir: ^5.0.6
+  mind-elixir: ^5.1.1
   "@types/node": ^24.0.0
   typescript: ~5.8.3
   vite: ^6.3.5
