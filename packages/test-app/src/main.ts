@@ -4,6 +4,7 @@ import { launchMindElixir } from '@mind-elixir/open-desktop'
 import { downloadMethodList } from '@mind-elixir/export-mindmap'
 import MindElixir from 'mind-elixir'
 import 'mind-elixir/style.css'
+import { plaintextToMindElixir } from 'mind-elixir/plaintextConverter'
 import example from 'mind-elixir/example'
 
 // 创建MindElixir实例
@@ -56,13 +57,31 @@ async function testFreeMindImport() {
   }
 }
 
+// 测试Plaintext导入
+async function testPlaintextImport() {
+  try {
+    console.log('测试Plaintext导入...')
+    const response = await fetch('/sample/plaintext.mept')
+    const text = await response.text()
+    
+    // 使用导入的plaintextToMindElixir转换数据
+    const data = plaintextToMindElixir(text)
+    console.log('Plaintext导入成功:', data)
+    mindElixir.refresh(data)
+  } catch (error) {
+    console.error('Plaintext导入失败:', error)
+  }
+}
+
 // 添加按钮事件
 document.addEventListener('DOMContentLoaded', () => {
   const xmindBtn = document.getElementById('test-xmind')
   const freemindBtn = document.getElementById('test-freemind')
+  const plaintextBtn = document.getElementById('test-plaintext')
   
   xmindBtn?.addEventListener('click', testXMindImport)
   freemindBtn?.addEventListener('click', testFreeMindImport)
+  plaintextBtn?.addEventListener('click', testPlaintextImport)
 })
 
 document.getElementById('test-open-desktop')?.addEventListener('click', () => {

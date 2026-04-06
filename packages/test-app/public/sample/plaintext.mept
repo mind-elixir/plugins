@@ -1,0 +1,15 @@
+- Project Planning #ddaaa
+  - Phase 1: Research [^phase1]
+    - Market Analysis
+    - Competitor Study
+    - }:1 Long Research Summary, Long Research Summary
+  - Phase 2: Development [^phase2]
+    - Frontend
+    - Backend
+    - Testing
+    - }Development Summary
+  - Phase 3: Launch [^phase3]
+    - Marketing
+    - Deployment
+  - > [^phase1] (0,71) >-Leads to-> (0,-71) [^phase2]
+  - > [^phase2] (0,70) >-Leads >fe to-> (0,-70) [^phase3]

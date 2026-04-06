@@ -23,5 +23,8 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "mind-elixir": "catalog:"
+  },
+  "peerDependencies": {
+    "mind-elixir": "^5.10.0"
   }
 }
