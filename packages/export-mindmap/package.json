@@ -26,7 +26,6 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@ssshooter/modern-screenshot": "^4.5.0",
     "@types/node": "catalog:",
     "fast-xml-parser": "catalog:",
     "jszip": "catalog:",

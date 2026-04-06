@@ -50,9 +50,6 @@ importers:
 
   packages/export-mindmap:
     dependencies:
-      '@ssshooter/modern-screenshot':
-        specifier: ^4.5.0
-        version: 4.5.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.0.0
@@ -579,9 +576,6 @@ packages:
   '@rushstack/ts-command-line@5.0.1':
     resolution: {integrity: sha512-bsbUucn41UXrQK7wgM8CNM/jagBytEyJqXw/umtI8d68vFm1Jwxh1OtLrlW7uGZgjCWiiPH6ooUNa1aVsuVr3Q==}
 
-  '@ssshooter/modern-screenshot@4.5.0':
-    resolution: {integrity: sha512-/aAXhXOW1lyooUu8KlSvpe3nBvqEOZCL8OXUZ/g4A3nwEiMfGpqY3gBkaxIUUr2k/3dh51vh9u66oTIQ/Eq+1A==}
-
   '@types/argparse@1.0.38':
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
 
@@ -940,9 +934,6 @@ packages:
   micromatch@4.0.8:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
-
-  mind-elixir@4.6.2:
-    resolution: {integrity: sha512-KjIjInLbMtW7J68Hm+oJ/+g/fhG+h6kkJkU5HL1LgqLSIyKFQM4V5xogibbqm+9ycBmKu2TTOlE+5O2/3VZPtA==}
 
   mind-elixir@5.10.0:
     resolution: {integrity: sha512-AY/tDXz8stMbx0MIutdn63Dz0uwY1VVMKIxCqOOA2hg5WGdCGm2qqEZF498deLDxoZbL+hDf1SwBWzvWADBoPA==}
@@ -1719,10 +1710,6 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@ssshooter/modern-screenshot@4.5.0':
-    dependencies:
-      mind-elixir: 4.6.2
-
   '@types/argparse@1.0.38': {}
 
   '@types/estree@1.0.7': {}
@@ -2087,8 +2074,6 @@ snapshots:
     dependencies:
       braces: 3.0.3
       picomatch: 2.3.1
-
-  mind-elixir@4.6.2: {}
 
   mind-elixir@5.10.0: {}
 

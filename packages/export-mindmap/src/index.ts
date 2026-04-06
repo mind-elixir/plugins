@@ -2,7 +2,6 @@ import { MindElixirInstance } from 'mind-elixir'
 import { convertToHtml, HtmlExportOptions } from './html'
 import { convertToMd } from './markdown'
 import { domToBlob, Options } from 'modern-screenshot'
-// import { domToBlob, Options } from "@ssshooter/modern-screenshot";
 
 export const downloadUrl = async (url: string, fileName: string) => {
   const link = document.createElement('a')
@@ -12,9 +11,23 @@ export const downloadUrl = async (url: string, fileName: string) => {
 }
 
 export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg' | 'webp', options?: Options) => {
+  const labels = mei.nodes.querySelectorAll('.svg-label')
+  let marginL = 0
+  let marginR = 0
+  const mapRect = mei.nodes.getBoundingClientRect()
+  labels.forEach(el => {
+    const rect = el.getBoundingClientRect()
+    const relativeLeft = mapRect.left - rect.left
+    const relativeRight = rect.right - mapRect.right
+    if (relativeLeft > marginL) marginL = relativeLeft
+    if (relativeRight > marginR) marginR = relativeRight
+  })
+  console.log('marginL', marginL, 'marginR', marginR)
+  let width = mei.nodes.offsetWidth
+  if (marginL > 0) width += marginL + 10 // 多加 10 不然完全擦边
+  if (marginR > 0) width += marginR + 10
   const height = mei.nodes.offsetHeight
-  const width = mei.nodes.offsetWidth
-  const blob = await domToBlob(mei.nodes, {
+  const blob = await domToBlob(mei.nodes.parentElement!, {
     height,
     width,
     type: 'image/' + format,
@@ -22,6 +35,7 @@ export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg
       const n = node as HTMLElement
       n.style.transform = 'none'
       n.style.transformOrigin = ''
+      if (marginL > 0) n.style.marginLeft = marginL + 10 + 'px'
     },
     backgroundColor: mei.theme.cssVar['--bgcolor'],
     quality: format === 'png' ? 1 : 0.7,
