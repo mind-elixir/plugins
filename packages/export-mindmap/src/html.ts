@@ -3,22 +3,22 @@ import MindElixir from 'mind-elixir/lite?raw'
 import style from 'mind-elixir/style.css?raw'
 
 export interface HtmlExportOptions extends Options {
-  customCss?: string;
+  customCss?: string
 }
 
 const generateHtml = (js: string, data: string, options?: HtmlExportOptions) => {
-  const { customCss = '', ...mindElixirConfig } = options || {};
-  
+  const { customCss = '', ...mindElixirConfig } = options || {}
+
   const defaultConfig = {
     el: '#mind-elixir',
     editable: false,
     draggable: false,
     contextMenu: false,
-    mouseSelectionButton: 2
-  };
-  
-  const finalConfig = { ...defaultConfig, ...mindElixirConfig };
-  
+    mouseSelectionButton: 2,
+  }
+
+  const finalConfig = { ...defaultConfig, ...mindElixirConfig }
+
   return `<!DOCTYPE html>
     <html lang="en">
     <head>

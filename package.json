@@ -9,7 +9,8 @@
     "test": "pnpm -r test",
     "clean": "pnpm -r clean",
     "check-types": "turbo check-types",
-    "test-app": "turbo dev --filter=@mind-elixir/test-app"
+    "test-app": "turbo dev --filter=@mind-elixir/test-app",
+    "format": "pnpm dlx prettier --write \"**/*.{ts,tsx}\" --ignore-path .gitignore"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.5",

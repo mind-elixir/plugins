@@ -63,7 +63,7 @@ async function testPlaintextImport() {
     console.log('测试Plaintext导入...')
     const response = await fetch('/sample/plaintext.mept')
     const text = await response.text()
-    
+
     // 使用导入的plaintextToMindElixir转换数据
     const data = plaintextToMindElixir(text)
     console.log('Plaintext导入成功:', data)
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const xmindBtn = document.getElementById('test-xmind')
   const freemindBtn = document.getElementById('test-freemind')
   const plaintextBtn = document.getElementById('test-plaintext')
-  
+
   xmindBtn?.addEventListener('click', testXMindImport)
   freemindBtn?.addEventListener('click', testFreeMindImport)
   plaintextBtn?.addEventListener('click', testPlaintextImport)

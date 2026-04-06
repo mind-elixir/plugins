@@ -5,22 +5,22 @@ export default defineConfig({
   plugins: [
     dts({
       insertTypesEntry: true,
-    })
+    }),
   ],
   build: {
     lib: {
       entry: 'src/index.ts',
       name: 'ExportMindmap',
       formats: ['es', 'umd'],
-      fileName: (format) => `index.${format === 'es' ? 'js' : 'umd.cjs'}`
+      fileName: format => `index.${format === 'es' ? 'js' : 'umd.cjs'}`,
     },
     rollupOptions: {
       external: ['mind-elixir'],
       output: {
         globals: {
-          'mind-elixir': 'MindElixir'
-        }
-      }
-    }
-  }
+          'mind-elixir': 'MindElixir',
+        },
+      },
+    },
+  },
 })

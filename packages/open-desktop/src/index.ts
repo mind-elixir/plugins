@@ -1,29 +1,26 @@
-import type {
-  MindElixirData
-} from "mind-elixir";
+import type { MindElixirData } from 'mind-elixir'
 
 export function openAppWithFallback(url: string) {
   return new Promise((resolve, reject) => {
-    const now = Date.now();
+    const now = Date.now()
 
     // 1. 尝试打开协议
-    const iframe = document.createElement("iframe");
-    iframe.style.display = "none";
-    iframe.src = url;
-    document.body.appendChild(iframe);
+    const iframe = document.createElement('iframe')
+    iframe.style.display = 'none'
+    iframe.src = url
+    document.body.appendChild(iframe)
 
     // 2. 设置 fallback 超时（可视浏览器行为调整）
     setTimeout(() => {
-      const delta = Date.now() - now;
+      const delta = Date.now() - now
       if (delta < 1500) {
         window.open('https://desktop.mind-elixir.com/', '_blank')
-        reject("未安装 Mind Elixir Desktop")
-      }
-      else {
+        reject('未安装 Mind Elixir Desktop')
+      } else {
         // 用户已离开页面，认为已安装
-        resolve(true);
+        resolve(true)
       }
-    }, 2000);
+    }, 2000)
   })
 }
 
@@ -81,7 +78,7 @@ export const launchMindElixir = async (
     appUrl = 'mind-elixir://open',
     serviceUrl = 'http://127.0.0.1:6595/create-mindmap',
     pingUrl = 'http://127.0.0.1:6595/ping',
-    timeout = 8000
+    timeout = 8000,
   } = options
 
   // 打开 Mind Elixir 应用
@@ -98,8 +95,8 @@ export const launchMindElixir = async (
     },
     body: JSON.stringify({
       mindmap: JSON.stringify(mindmapData),
-      source: source || window.location.href.split('?')[0]
-    })
+      source: source || window.location.href.split('?')[0],
+    }),
   })
 
   if (!response.ok) {
