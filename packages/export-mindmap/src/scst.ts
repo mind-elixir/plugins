@@ -24,8 +24,12 @@ export interface Options {
   quality?: number
   /** Called on the cloned root node before rendering — apply any DOM tweaks here */
   onClone?: (clone: HTMLElement) => void
+  /** Called on the host <div> that contains the clone — apply any overall tweaks here (e.g. watermarks) */
+  onHost?: (host: HTMLElement) => void
   /** CSS properties to skip inlining (for perf; skip non-visual props) */
   skipProperties?: string[]
+  /** Filter nodes to include in the screenshot */
+  filter?: (node: Element) => boolean
 }
 
 // Properties that are essential for visual fidelity
@@ -171,13 +175,19 @@ function inlineStyles(live: Element, clone: Element, skipProps: Set<string>): vo
 }
 
 /** Recursively walk two trees (live DOM + cloned DOM) together to inline styles */
-function walkAndInline(live: Element, clone: Element, skipProps: Set<string>): void {
+function walkAndInline(live: Element, clone: Element, skipProps: Set<string>, filter?: (node: Element) => boolean): void {
   inlineStyles(live, clone, skipProps)
-  const liveChildren = live.children
-  const cloneChildren = clone.children
+  const liveChildren = Array.from(live.children)
+  const cloneChildren = Array.from(clone.children)
   for (let i = 0; i < liveChildren.length; i++) {
-    if (cloneChildren[i]) {
-      walkAndInline(liveChildren[i], cloneChildren[i], skipProps)
+    const liveChild = liveChildren[i]
+    const cloneChild = cloneChildren[i]
+    if (filter && !filter(liveChild)) {
+      cloneChild.remove()
+      continue
+    }
+    if (cloneChild) {
+      walkAndInline(liveChild, cloneChild, skipProps, filter)
     }
   }
 }
@@ -231,7 +241,7 @@ async function domToSvgDataURI(element: HTMLElement, width: number, height: numb
   // 2. Inline computed styles first (walk live DOM alongside clone)
   //    Must run BEFORE onClone so the caller's overrides take effect last.
   const skipProps = new Set(options.skipProperties ?? [])
-  walkAndInline(element, clone, skipProps)
+  walkAndInline(element, clone, skipProps, options.filter)
 
   // Reset the clone root's own positioning.
   // Its computed top/left/transform were relative to ancestors that aren't
@@ -245,10 +255,7 @@ async function domToSvgDataURI(element: HTMLElement, width: number, height: numb
   //    Important: this runs AFTER walkAndInline so nothing overwrites e.g. transform:none.
   options.onClone?.(clone)
 
-  // 4. Inline images inside the clone
-  await inlineImages(clone)
-
-  // 5. Don't force width/height on the clone itself — it may use flexbox/flow layout
+  // 4. Don't force width/height on the clone itself — it may use flexbox/flow layout
   //    and overriding those would break child positioning.
   //    Instead wrap it in a host <div> that is exactly the target size, so the
   //    foreignObject viewport is well-defined while the clone lays out naturally.
@@ -264,9 +271,11 @@ async function domToSvgDataURI(element: HTMLElement, width: number, height: numb
     ...(options.backgroundColor ? [`background:${options.backgroundColor}`] : []),
   ].join(';')
   host.appendChild(clone)
-  // console.log('host', host)
-  // document.body.appendChild(host)
-  // return
+  options.onHost?.(host)
+
+  // 5. Inline images inside the entire host (including possible watermarks from onHost)
+  await inlineImages(host)
+
   // 6. Build the SVG wrapper
   const svgNS = 'http://www.w3.org/2000/svg'
   const svg = document.createElementNS(svgNS, 'svg') as SVGSVGElement
@@ -319,6 +328,9 @@ export async function domToBlob(element: HTMLElement, format: 'png' | 'jpeg' | '
 
   await waitForImage(img)
 
+  ctx.drawImage(img, 0, 0)
+  // safari hack: 不重绘会漏图
+  await new Promise(resolve => setTimeout(resolve, 100))
   ctx.drawImage(img, 0, 0)
 
   return new Promise<Blob>((resolve, reject) => {

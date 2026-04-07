@@ -67,21 +67,20 @@ export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg
   // mei.nodes has no transform on it (transform is on mei.map, the parent).
   // Use scrollWidth/scrollHeight to get the full content size including overflowing children.
   let width = mei.nodes.offsetWidth
-  console.log('width', width)
   if (marginL > 0) width += marginL + 10
   if (marginR > 0) width += marginR + 10
-  let height = mei.nodes.offsetHeight
-  console.log('height', height)
+  const height = mei.nodes.offsetHeight
+
   const url = await domToObjectURL(mei.nodes, format, {
     height,
     width,
     onClone: clone => {
-      clone.style.transformOrigin = '0 0'
       if (marginL > 0) {
-        clone.style.transform = `translateX(${marginL + 10}px)`
+        clone.style.marginLeft = `${marginL + 10}px`
       }
-
-      if (watermarkEnabled && clone instanceof HTMLElement) {
+    },
+    onHost: host => {
+      if (watermarkEnabled) {
         const bgColor = mei.theme.cssVar['--bgcolor']
         const isDark = isDarkColor(bgColor)
         const watermarkColor = isDark ? '#f6f6f6' : '#1a1a1a'
@@ -102,6 +101,7 @@ export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg
           align-items: center;
           gap: 6px;
           z-index: 9999999;
+          pointer-events: none;
         `
 
         // Create icon element
@@ -118,7 +118,7 @@ export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg
 
         watermark.appendChild(icon)
         watermark.appendChild(text)
-        clone.appendChild(watermark)
+        host.appendChild(watermark)
       }
     },
     backgroundColor: mei.theme.cssVar['--bgcolor'],
