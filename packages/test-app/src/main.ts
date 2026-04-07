@@ -78,10 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const xmindBtn = document.getElementById('test-xmind')
   const freemindBtn = document.getElementById('test-freemind')
   const plaintextBtn = document.getElementById('test-plaintext')
+  const exampleBtn = document.getElementById('test-example')
 
   xmindBtn?.addEventListener('click', testXMindImport)
   freemindBtn?.addEventListener('click', testFreeMindImport)
   plaintextBtn?.addEventListener('click', testPlaintextImport)
+  exampleBtn?.addEventListener('click', () => {
+    mindElixir.init(example)
+  })
 })
 
 document.getElementById('test-open-desktop')?.addEventListener('click', () => {

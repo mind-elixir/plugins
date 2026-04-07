@@ -1,7 +1,7 @@
 import { MindElixirInstance } from 'mind-elixir'
 import { convertToHtml, HtmlExportOptions } from './html'
 import { convertToMd } from './markdown'
-import { domToBlob, Options } from 'modern-screenshot'
+import { domToObjectURL, Options } from './scst'
 
 export const downloadUrl = async (url: string, fileName: string) => {
   const link = document.createElement('a')
@@ -10,38 +10,53 @@ export const downloadUrl = async (url: string, fileName: string) => {
   link.click()
 }
 
+const getOffsetLT = (parent: HTMLElement, child: HTMLElement) => {
+  let offsetLeft = 0
+  let offsetTop = 0
+  while (child && child !== parent) {
+    offsetLeft += child.offsetLeft
+    offsetTop += child.offsetTop
+    child = child.offsetParent as HTMLElement
+  }
+  return { offsetLeft, offsetTop }
+}
+
 export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg' | 'webp', options?: Options) => {
   const labels = mei.nodes.querySelectorAll('.svg-label')
   let marginL = 0
   let marginR = 0
-  const mapRect = mei.nodes.getBoundingClientRect()
   labels.forEach(el => {
-    const rect = el.getBoundingClientRect()
-    const relativeLeft = mapRect.left - rect.left
-    const relativeRight = rect.right - mapRect.right
+    const htmlEl = el as HTMLElement
+    const { offsetLeft } = getOffsetLT(mei.nodes as HTMLElement, htmlEl)
+    const relativeLeft = -offsetLeft
+    const relativeRight = offsetLeft + htmlEl.offsetWidth - (mei.nodes as HTMLElement).offsetWidth
     if (relativeLeft > marginL) marginL = relativeLeft
     if (relativeRight > marginR) marginR = relativeRight
   })
+
   console.log('marginL', marginL, 'marginR', marginR)
+  // mei.nodes has no transform on it (transform is on mei.map, the parent).
+  // Use scrollWidth/scrollHeight to get the full content size including overflowing children.
   let width = mei.nodes.offsetWidth
-  if (marginL > 0) width += marginL + 10 // 多加 10 不然完全擦边
+  console.log('width', width)
+  if (marginL > 0) width += marginL + 10
   if (marginR > 0) width += marginR + 10
-  const height = mei.nodes.offsetHeight
-  const blob = await domToBlob(mei.nodes.parentElement!, {
+  let height = mei.nodes.offsetHeight
+  console.log('height', height)
+  const url = await domToObjectURL(mei.nodes, format, {
     height,
     width,
-    type: 'image/' + format,
-    onCloneNode: node => {
-      const n = node as HTMLElement
-      n.style.transform = 'none'
-      n.style.transformOrigin = ''
-      if (marginL > 0) n.style.marginLeft = marginL + 10 + 'px'
+    onClone: clone => {
+      clone.style.transformOrigin = '0 0'
+      if (marginL > 0) {
+        clone.style.transform = `translateX(${marginL + 10}px)`
+      }
     },
     backgroundColor: mei.theme.cssVar['--bgcolor'],
     quality: format === 'png' ? 1 : 0.7,
     ...options,
   })
-  return URL.createObjectURL(blob)
+  return url
 }
 
 export const downloadImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg' | 'webp') => {
