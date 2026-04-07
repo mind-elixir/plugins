@@ -2,12 +2,40 @@ import { MindElixirInstance } from 'mind-elixir'
 import { convertToHtml, HtmlExportOptions } from './html'
 import { convertToMd } from './markdown'
 import { domToObjectURL, Options } from './scst'
+import iconUrl from './icon.png'
 
 export const downloadUrl = async (url: string, fileName: string) => {
   const link = document.createElement('a')
   link.download = fileName
   link.href = url
   link.click()
+}
+
+const isDarkColor = (color?: string): boolean => {
+  if (!color) return false
+  let r, g, b
+  if (color.startsWith('#')) {
+    const hex = color.slice(1)
+    if (hex.length === 3) {
+      r = parseInt(hex[0] + hex[0], 16)
+      g = parseInt(hex[1] + hex[1], 16)
+      b = parseInt(hex[2] + hex[2], 16)
+    } else {
+      r = parseInt(hex.slice(0, 2), 16)
+      g = parseInt(hex.slice(2, 4), 16)
+      b = parseInt(hex.slice(4, 6), 16)
+    }
+  } else if (color.startsWith('rgb')) {
+    const matches = color.match(/\d+/g)
+    if (matches && matches.length >= 3) {
+      r = parseInt(matches[0])
+      g = parseInt(matches[1])
+      b = parseInt(matches[2])
+    }
+  }
+  if (r === undefined || g === undefined || b === undefined) return false
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  return luminance < 0.5
 }
 
 const getOffsetLT = (parent: HTMLElement, child: HTMLElement) => {
@@ -21,7 +49,8 @@ const getOffsetLT = (parent: HTMLElement, child: HTMLElement) => {
   return { offsetLeft, offsetTop }
 }
 
-export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg' | 'webp', options?: Options) => {
+export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg' | 'webp', options?: Options & { watermarkEnabled?: boolean }) => {
+  const { watermarkEnabled = true, ...rest } = options || {}
   const labels = mei.nodes.querySelectorAll('.svg-label')
   let marginL = 0
   let marginR = 0
@@ -51,10 +80,50 @@ export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg
       if (marginL > 0) {
         clone.style.transform = `translateX(${marginL + 10}px)`
       }
+
+      if (watermarkEnabled && clone instanceof HTMLElement) {
+        const bgColor = mei.theme.cssVar['--bgcolor']
+        const isDark = isDarkColor(bgColor)
+        const watermarkColor = isDark ? '#f6f6f6' : '#1a1a1a'
+
+        // Create watermark container
+        const watermark = document.createElement('div')
+        watermark.style.cssText = `
+          position: absolute;
+          bottom: 16px;
+          left: 50%;
+          transform: translateX(-50%);
+          font-size: 16px;
+          color: ${watermarkColor};
+          font-family: system-ui, -apple-system, sans-serif;
+          font-weight: 500;
+          white-space: nowrap;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          z-index: 9999999;
+        `
+
+        // Create icon element
+        const icon = document.createElement('img')
+        icon.src = iconUrl
+        icon.style.cssText = `
+          width: 22px;
+          height: 22px;
+        `
+
+        // Create text element
+        const text = document.createElement('span')
+        text.textContent = 'MIND ELIXIR'
+
+        watermark.appendChild(icon)
+        watermark.appendChild(text)
+        clone.appendChild(watermark)
+      }
     },
     backgroundColor: mei.theme.cssVar['--bgcolor'],
     quality: format === 'png' ? 1 : 0.7,
-    ...options,
+    ...rest,
   })
   return url
 }
@@ -173,3 +242,4 @@ export const downloadMethodList = [
 ] as const
 
 export { convertToHtml, convertToMd, type Options as ImageOptions, type HtmlExportOptions }
+export * from './scst'
