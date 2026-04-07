@@ -164,6 +164,9 @@ importers:
       '@mind-elixir/open-desktop':
         specifier: workspace:*
         version: link:../open-desktop
+      modern-screenshot:
+        specifier: ^4.6.6
+        version: 4.6.6
     devDependencies:
       '@mind-elixir/typescript-config':
         specifier: workspace:*
@@ -171,6 +174,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.0.0
+      '@zumer/snapdom':
+        specifier: ^2.7.0
+        version: 2.7.0
       mind-elixir:
         specifier: 'catalog:'
         version: 5.10.0
@@ -616,6 +622,9 @@ packages:
 
   '@vue/shared@3.5.16':
     resolution: {integrity: sha512-c/0fWy3Jw6Z8L9FmTyYfkpM5zklnqqa9+a6dz3DvONRKW2NEbh46BP0FHuLFSWi2TnQEtp91Z6zOWNrU6QiyPg==}
+
+  '@zumer/snapdom@2.7.0':
+    resolution: {integrity: sha512-ZiELKzDszeFOazPQ/ExXzgtdoW9jADVjDjInr5XDAlVdCx0RbNsFiG7RLyM48XnA7EyCA9yTvmXSc3ElDrTRqA==}
 
   acorn@8.15.0:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
@@ -1764,6 +1773,8 @@ snapshots:
       typescript: 5.8.3
 
   '@vue/shared@3.5.16': {}
+
+  '@zumer/snapdom@2.7.0': {}
 
   acorn@8.15.0: {}
 

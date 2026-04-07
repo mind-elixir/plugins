@@ -6,6 +6,9 @@ import MindElixir from 'mind-elixir'
 import 'mind-elixir/style.css'
 import { plaintextToMindElixir } from 'mind-elixir/plaintextConverter'
 import example from 'mind-elixir/example'
+import * as modernScreenshot from 'modern-screenshot'
+import { domToObjectURL } from '../../export-mindmap/src/scst'
+import { snapdom } from '@zumer/snapdom'
 
 // 创建MindElixir实例
 const mindElixir = new MindElixir({
@@ -146,5 +149,73 @@ document.addEventListener('DOMContentLoaded', () => {
       webpMethod.download(mindElixir)
       console.log('WEBP图片下载完成')
     }
+  })
+
+  // 性能测试
+  document.getElementById('run-benchmark')?.addEventListener('click', async () => {
+    const resultsArea = document.getElementById('benchmark-results')!
+    const output = document.getElementById('results-output')!
+    resultsArea.style.display = 'block'
+    output.textContent = 'Running benchmark... Please wait.\n'
+
+    const target = mindElixir.nodes as HTMLElement
+    const iterations = 5
+    const results = {
+      scst: [] as number[],
+      modernScreenshot: [] as number[],
+      snapdom: [] as number[],
+    }
+
+    // Warm up
+    await domToObjectURL(target, 'png')
+    await modernScreenshot.domToPng(target)
+    await snapdom(target)
+
+    // SCST Benchmark
+    for (let i = 0; i < iterations; i++) {
+      const start = performance.now()
+      const url = await domToObjectURL(target, 'png')
+      results.scst.push(performance.now() - start)
+      URL.revokeObjectURL(url)
+    }
+
+    // Modern Screenshot Benchmark
+    for (let i = 0; i < iterations; i++) {
+      const start = performance.now()
+      await modernScreenshot.domToPng(target)
+      results.modernScreenshot.push(performance.now() - start)
+    }
+
+    // Snapdom Benchmark
+    for (let i = 0; i < iterations; i++) {
+      const start = performance.now()
+      await snapdom(target)
+      results.snapdom.push(performance.now() - start)
+    }
+
+    const scstAvg = results.scst.reduce((a, b) => a + b, 0) / iterations
+    const modernAvg = results.modernScreenshot.reduce((a, b) => a + b, 0) / iterations
+    const snapdomAvg = results.snapdom.reduce((a, b) => a + b, 0) / iterations
+
+    output.textContent = `Iterations: ${iterations}
+Target Element Size: ${target.offsetWidth}x${target.offsetHeight}
+
+SCST:
+  Average: ${scstAvg.toFixed(2)}ms
+  Runs: ${results.scst.map(r => r.toFixed(2) + 'ms').join(', ')}
+
+Modern Screenshot:
+  Average: ${modernAvg.toFixed(2)}ms
+  Runs: ${results.modernScreenshot.map(r => r.toFixed(2) + 'ms').join(', ')}
+
+Snapdom:
+  Average: ${snapdomAvg.toFixed(2)}ms
+  Runs: ${results.snapdom.map(r => r.toFixed(2) + 'ms').join(', ')}
+
+Comparison:
+  SCST is ${(modernAvg / scstAvg).toFixed(2)}x faster than Modern Screenshot.
+  SCST is ${(snapdomAvg / scstAvg).toFixed(2)}x faster than Snapdom.
+  Snapdom is ${(modernAvg / snapdomAvg).toFixed(2)}x faster than Modern Screenshot.
+`
   })
 })

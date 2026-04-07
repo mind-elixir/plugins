@@ -12,17 +12,19 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@mind-elixir/import-xmind": "workspace:*",
+    "@mind-elixir/export-mindmap": "workspace:*",
     "@mind-elixir/import-freemind": "workspace:*",
-    "@mind-elixir/open-desktop": "workspace:*",
-    "@mind-elixir/export-mindmap": "workspace:*"
+    "@mind-elixir/import-xmind": "workspace:*",
+    "@mind-elixir/open-desktop": "workspace:*"
   },
   "devDependencies": {
     "@mind-elixir/typescript-config": "workspace:*",
     "@types/node": "catalog:",
+    "@zumer/snapdom": "^2.7.0",
+    "mind-elixir": "catalog:",
+    "modern-screenshot": "^4.6.6",
     "typescript": "catalog:",
-    "vite": "catalog:",
-    "mind-elixir": "catalog:"
+    "vite": "catalog:"
   },
   "peerDependencies": {
     "mind-elixir": "^5.10.0"

@@ -28,28 +28,112 @@ export interface Options {
   skipProperties?: string[]
 }
 
-// Properties that are safe to skip for visual fidelity
-const DEFAULT_SKIP = new Set([
-  'animation',
-  'animation-delay',
-  'animation-direction',
-  'animation-duration',
-  'animation-fill-mode',
-  'animation-iteration-count',
-  'animation-name',
-  'animation-play-state',
-  'animation-timing-function',
-  'transition',
-  'transition-delay',
-  'transition-duration',
-  'transition-property',
-  'transition-timing-function',
-  'cursor',
-  'pointer-events',
-  'user-select',
-  '-webkit-user-select',
-  'will-change',
-])
+// Properties that are essential for visual fidelity
+const WHITELIST = [
+  'box-sizing',
+  'display',
+  'position',
+  'top',
+  'right',
+  'bottom',
+  'left',
+  'width',
+  'height',
+  'min-width',
+  'min-height',
+  'max-width',
+  'max-height',
+  'flex',
+  'flex-basis',
+  'flex-direction',
+  'flex-grow',
+  'flex-shrink',
+  'flex-wrap',
+  'align-content',
+  'align-items',
+  'align-self',
+  'justify-content',
+  'justify-items',
+  'justify-self',
+  'order',
+  'float',
+  'clear',
+  'margin',
+  'margin-top',
+  'margin-right',
+  'margin-bottom',
+  'margin-left',
+  'padding',
+  'padding-top',
+  'padding-right',
+  'padding-bottom',
+  'padding-left',
+  'border',
+  'border-top',
+  'border-right',
+  'border-bottom',
+  'border-left',
+  'border-width',
+  'border-top-width',
+  'border-right-width',
+  'border-bottom-width',
+  'border-left-width',
+  'border-style',
+  'border-top-style',
+  'border-right-style',
+  'border-bottom-style',
+  'border-left-style',
+  'border-color',
+  'border-top-color',
+  'border-right-color',
+  'border-bottom-color',
+  'border-left-color',
+  'border-radius',
+  'border-top-left-radius',
+  'border-top-right-radius',
+  'border-bottom-left-radius',
+  'border-bottom-right-radius',
+  'background',
+  'background-color',
+  'background-image',
+  'background-repeat',
+  'background-size',
+  'background-position',
+  'color',
+  'font',
+  'font-family',
+  'font-size',
+  'font-weight',
+  'font-style',
+  'line-height',
+  'text-align',
+  'text-decoration',
+  'text-transform',
+  'text-shadow',
+  'text-overflow',
+  'white-space',
+  'word-break',
+  'word-wrap',
+  'vertical-align',
+  'opacity',
+  'visibility',
+  'transform',
+  'transform-origin',
+  'box-shadow',
+  'outline',
+  'z-index',
+  'overflow',
+  'overflow-x',
+  'overflow-y',
+  // SVG specific
+  'fill',
+  'stroke',
+  'stroke-width',
+  // RTL and layout
+  'direction',
+  'unicode-bidi',
+  'writing-mode',
+]
 
 /** Fetch a URL and return a base64 data URI */
 async function toDataURI(url: string): Promise<string> {
@@ -77,13 +161,11 @@ function inlineStyles(live: Element, clone: Element, skipProps: Set<string>): vo
   const computed = window.getComputedStyle(live)
   const style = clone.style
 
-  for (let i = 0; i < computed.length; i++) {
-    const prop = computed[i]
+  for (const prop of WHITELIST) {
     if (skipProps.has(prop)) continue
-    try {
-      style.setProperty(prop, computed.getPropertyValue(prop), computed.getPropertyPriority(prop))
-    } catch {
-      // some props are read-only or invalid, ignore
+    const value = computed.getPropertyValue(prop)
+    if (value) {
+      style.setProperty(prop, value, computed.getPropertyPriority(prop))
     }
   }
 }
@@ -148,7 +230,7 @@ async function domToSvgDataURI(element: HTMLElement, width: number, height: numb
 
   // 2. Inline computed styles first (walk live DOM alongside clone)
   //    Must run BEFORE onClone so the caller's overrides take effect last.
-  const skipProps = new Set([...DEFAULT_SKIP, ...(options.skipProperties ?? [])])
+  const skipProps = new Set(options.skipProperties ?? [])
   walkAndInline(element, clone, skipProps)
 
   // Reset the clone root's own positioning.
