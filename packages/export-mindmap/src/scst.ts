@@ -169,15 +169,7 @@ function inlineStyles(live: Element, clone: Element, skipProps: Set<string>): vo
     if (skipProps.has(prop)) continue
     const value = computed.getPropertyValue(prop)
     if (value) {
-      // SVG foreignObject text rendering has subpixel measurement differences
-      // vs the live DOM, which can cause the last word of a node to wrap.
-      // Nudge width up by 1px to absorb that rounding gap.
-      if (live.tagName === 'ME-TPC' && prop === 'width' && value.endsWith('px')) {
-        const nudged = parseFloat(value) + 1
-        style.setProperty(prop, `${nudged}px`, computed.getPropertyPriority(prop))
-      } else {
-        style.setProperty(prop, value, computed.getPropertyPriority(prop))
-      }
+      style.setProperty(prop, value, computed.getPropertyPriority(prop))
     }
   }
 }
@@ -250,6 +242,30 @@ async function domToSvgDataURI(element: HTMLElement, width: number, height: numb
   //    Must run BEFORE onClone so the caller's overrides take effect last.
   const skipProps = new Set(options.skipProperties ?? [])
   walkAndInline(element, clone, skipProps, options.filter)
+
+  // 3. Fix text wrapping for ME-TPC nodes (Hack)
+  // SVG foreignObject text rendering has subpixel measurement differences
+  // vs the live DOM, which can cause the last word of a node to wrap.
+  // Setting text-wrap: nowrap absorbs that rounding gap.
+  // We also force nowrap on children because walkAndInline might have
+  // assigned them explicit wrapping styles from the live DOM.
+  // 简而言之，是为了 hack 有时候导出图片最后一个单词会换行
+  const tpcs = Array.from(clone.querySelectorAll('me-tpc'))
+  if (clone.tagName === 'ME-TPC') tpcs.push(clone)
+  tpcs.forEach(node => {
+    const style = (node as HTMLElement).style
+    const width = style.getPropertyValue('width')
+    const maxWidth = style.getPropertyValue('max-width')
+    if (width && width.endsWith('px') && width !== maxWidth) {
+      style.setProperty('text-wrap', 'nowrap')
+      Array.from(node.children).forEach(child => {
+        if (child instanceof HTMLElement) {
+          child.style.setProperty('text-wrap', 'nowrap')
+        }
+      })
+    }
+  })
+  debugger
 
   // Reset the clone root's own positioning.
   // Its computed top/left/transform were relative to ancestors that aren't
