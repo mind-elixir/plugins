@@ -10,6 +10,29 @@ import * as modernScreenshot from 'modern-screenshot'
 import { domToObjectURL } from '../../export-mindmap/src/scst'
 import { snapdom } from '@zumer/snapdom'
 
+const customData = {
+  nodeData: {
+    id: 'root',
+    topic: '自由测试数据',
+    root: true,
+    children: [
+      {
+        id: 'child1',
+        topic: '子节点 1',
+        children: [
+          { id: 'child1-1', topic: '子节点 1-1' },
+          { id: 'child1-2', topic: '子节点 1-2' },
+        ],
+      },
+      {
+        id: 'child2',
+        topic: '子节点 2',
+        dangerouslySetInnerHTML: '<h2>I’m interested in Obsidian</h2>',
+      },
+    ],
+  },
+}
+
 // 创建MindElixir实例
 const mindElixir = new MindElixir({
   el: '#map',
@@ -88,6 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
   plaintextBtn?.addEventListener('click', testPlaintextImport)
   exampleBtn?.addEventListener('click', () => {
     mindElixir.init(example)
+  })
+  document.getElementById('test-custom-data')?.addEventListener('click', () => {
+    mindElixir.init(customData)
   })
 })
 
