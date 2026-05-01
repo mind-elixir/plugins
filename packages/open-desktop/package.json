@@ -1,7 +1,7 @@
 {
   "name": "@mind-elixir/open-desktop",
   "private": false,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "description": "Import XMind files to MindElixir format",
   "main": "./dist/index.js",
@@ -25,8 +25,7 @@
     "clean": "rm -rf dist",
     "check-types": "tsc --noEmit"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@mind-elixir/typescript-config": "workspace:*",
     "typescript": "catalog:",

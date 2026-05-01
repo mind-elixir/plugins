@@ -95,7 +95,7 @@ export const launchMindElixir = async (
     },
     body: JSON.stringify({
       mindmap: JSON.stringify(mindmapData),
-      source: source || window.location.href.split('?')[0],
+      source: source || window.location.href,
     }),
   })
 
