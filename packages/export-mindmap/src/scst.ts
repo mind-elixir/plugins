@@ -169,7 +169,15 @@ function inlineStyles(live: Element, clone: Element, skipProps: Set<string>): vo
     if (skipProps.has(prop)) continue
     const value = computed.getPropertyValue(prop)
     if (value) {
-      style.setProperty(prop, value, computed.getPropertyPriority(prop))
+      // SVG foreignObject text rendering has subpixel measurement differences
+      // vs the live DOM, which can cause the last word of a node to wrap.
+      // Nudge width up by 1px to absorb that rounding gap.
+      if (live.tagName === 'ME-TPC' && prop === 'width' && value.endsWith('px')) {
+        const nudged = parseFloat(value) + 1
+        style.setProperty(prop, `${nudged}px`, computed.getPropertyPriority(prop))
+      } else {
+        style.setProperty(prop, value, computed.getPropertyPriority(prop))
+      }
     }
   }
 }
