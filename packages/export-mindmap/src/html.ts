@@ -2,6 +2,9 @@ import { MindElixirData, Options } from 'mind-elixir'
 import MindElixir from 'mind-elixir/lite?raw'
 import style from 'mind-elixir/style.css?raw'
 
+/**
+ * @deprecated HTML export is deprecated and will be removed in a future release.
+ */
 export interface HtmlExportOptions extends Options {
   customCss?: string
 }
@@ -41,6 +44,9 @@ const generateHtml = (js: string, data: string, options?: HtmlExportOptions) => 
     </html>`
 }
 
+/**
+ * @deprecated HTML export is deprecated and will be removed in a future release.
+ */
 export function convertToHtml(data: MindElixirData, options?: HtmlExportOptions) {
   const dataStr = JSON.stringify(data)
   return generateHtml(MindElixir, dataStr, options)

@@ -164,9 +164,6 @@ importers:
       '@mind-elixir/open-desktop':
         specifier: workspace:*
         version: link:../open-desktop
-      modern-screenshot:
-        specifier: ^4.6.6
-        version: 4.6.6
     devDependencies:
       '@mind-elixir/typescript-config':
         specifier: workspace:*
@@ -180,6 +177,9 @@ importers:
       mind-elixir:
         specifier: 'catalog:'
         version: 5.10.0
+      modern-screenshot:
+        specifier: ^4.6.6
+        version: 4.6.6
       typescript:
         specifier: 'catalog:'
         version: 5.8.3

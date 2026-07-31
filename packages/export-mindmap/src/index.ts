@@ -133,6 +133,9 @@ export const downloadImage = async (mei: MindElixirInstance, format: 'png' | 'jp
   downloadUrl(url, mei.nodeData.topic + '.' + format)
 }
 
+/**
+ * @deprecated HTML export is deprecated and will be removed in a future release.
+ */
 export const exportHtml = (mei: MindElixirInstance, options?: HtmlExportOptions) => {
   const data = mei.getData()
   const html = convertToHtml(data, options)
@@ -141,6 +144,9 @@ export const exportHtml = (mei: MindElixirInstance, options?: HtmlExportOptions)
   return url
 }
 
+/**
+ * @deprecated HTML export is deprecated and will be removed in a future release.
+ */
 export const downloadHtml = (mei: MindElixirInstance, options?: HtmlExportOptions) => {
   const url = exportHtml(mei, options)
   downloadUrl(url, mei.nodeData.topic + '.html')
@@ -174,6 +180,9 @@ export const downloadMarkdown = (mei: MindElixirInstance) => {
 export const exportMethodList = [
   {
     type: 'HTML',
+    /**
+     * @deprecated HTML export is deprecated and will be removed in a future release.
+     */
     export(mei: MindElixirInstance, options?: HtmlExportOptions) {
       return exportHtml(mei, options)
     },
@@ -209,6 +218,9 @@ export const exportMethodList = [
 export const downloadMethodList = [
   {
     type: 'HTML',
+    /**
+     * @deprecated HTML export is deprecated and will be removed in a future release.
+     */
     download(mei: MindElixirInstance, options?: HtmlExportOptions) {
       return downloadHtml(mei, options)
     },
