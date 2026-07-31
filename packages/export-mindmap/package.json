@@ -1,7 +1,7 @@
 {
   "name": "@mind-elixir/export-mindmap",
   "private": false,
-  "version": "0.1.5",
+  "version": "0.1.6",
   "type": "module",
   "sideEffects": false,
   "description": "Download mindmap file",
@@ -22,18 +22,14 @@
   ],
   "scripts": {
     "build": "tsc && vite build",
+    "prepublishOnly": "pnpm build",
     "dev": "vite build --watch",
     "clean": "rm -rf dist",
     "check-types": "tsc --noEmit"
   },
-  "dependencies": {
-    "@types/node": "catalog:",
-    "fast-xml-parser": "catalog:",
-    "jszip": "catalog:",
-    "modern-screenshot": "^4.6.6"
-  },
   "devDependencies": {
     "@mind-elixir/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
     "mind-elixir": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

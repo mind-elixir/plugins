@@ -49,23 +49,13 @@ importers:
         version: 4.5.4(@types/node@24.0.0)(rollup@4.41.1)(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.0))
 
   packages/export-mindmap:
-    dependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.0.0
-      fast-xml-parser:
-        specifier: 'catalog:'
-        version: 4.5.3
-      jszip:
-        specifier: 'catalog:'
-        version: 3.10.1
-      modern-screenshot:
-        specifier: ^4.6.6
-        version: 4.6.6
     devDependencies:
       '@mind-elixir/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.0.0
       mind-elixir:
         specifier: 'catalog:'
         version: 5.10.0
