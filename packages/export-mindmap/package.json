@@ -1,8 +1,9 @@
 {
   "name": "@mind-elixir/export-mindmap",
   "private": false,
-  "version": "0.1.4-beta.6",
+  "version": "0.1.5",
   "type": "module",
+  "sideEffects": false,
   "description": "Download mindmap file",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

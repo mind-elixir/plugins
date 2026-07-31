@@ -265,7 +265,6 @@ async function domToSvgDataURI(element: HTMLElement, width: number, height: numb
       })
     }
   })
-  debugger
 
   // Reset the clone root's own positioning.
   // Its computed top/left/transform were relative to ancestors that aren't
