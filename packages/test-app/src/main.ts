@@ -117,8 +117,20 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 })
 
-document.getElementById('test-open-desktop')?.addEventListener('click', () => {
-  launchMindElixir(example)
+const openDesktopBtn = document.getElementById('test-open-desktop') as HTMLButtonElement | null
+openDesktopBtn?.addEventListener('click', async () => {
+  if (!openDesktopBtn) return
+  const spinner = openDesktopBtn.querySelector('.btn-spinner')
+  spinner?.setAttribute('style', '')
+  openDesktopBtn.disabled = true
+  try {
+    await launchMindElixir(example, undefined, { timeout: 5000 })
+  } catch (error) {
+    console.error(error)
+  } finally {
+    spinner?.setAttribute('style', 'display: none;')
+    openDesktopBtn.disabled = false
+  }
 })
 
 // 添加导出功能测试

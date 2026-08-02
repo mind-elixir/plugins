@@ -30,6 +30,22 @@
       height: 600px;
       border: 1px solid #ccc;
     }
+    .btn-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-right: 6px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: btn-spin 0.8s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes btn-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 <body>
@@ -40,7 +56,7 @@
     <button id="test-freemind">测试FreeMind导入</button>
     <button id="test-plaintext">测试Plaintext导入</button>
     <button id="test-example">显示Example</button>
-    <button id="test-open-desktop">测试打开桌面应用</button>
+    <button id="test-open-desktop"><span class="btn-spinner" style="display: none;"></span>测试打开桌面应用</button>
     <button id="test-custom-data">导入自由测试数据</button>
   </div>
 
