@@ -16,33 +16,6 @@ const revokeAfterDownload = (url: string) => {
   setTimeout(() => URL.revokeObjectURL(url), 0)
 }
 
-const isDarkColor = (color?: string): boolean => {
-  if (!color) return false
-  let r, g, b
-  if (color.startsWith('#')) {
-    const hex = color.slice(1)
-    if (hex.length === 3) {
-      r = parseInt(hex[0] + hex[0], 16)
-      g = parseInt(hex[1] + hex[1], 16)
-      b = parseInt(hex[2] + hex[2], 16)
-    } else {
-      r = parseInt(hex.slice(0, 2), 16)
-      g = parseInt(hex.slice(2, 4), 16)
-      b = parseInt(hex.slice(4, 6), 16)
-    }
-  } else if (color.startsWith('rgb')) {
-    const matches = color.match(/\d+/g)
-    if (matches && matches.length >= 3) {
-      r = parseInt(matches[0])
-      g = parseInt(matches[1])
-      b = parseInt(matches[2])
-    }
-  }
-  if (r === undefined || g === undefined || b === undefined) return false
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-  return luminance < 0.5
-}
-
 const getOffsetLT = (parent: HTMLElement, child: HTMLElement) => {
   let offsetLeft = 0
   let offsetTop = 0
@@ -86,8 +59,7 @@ export const exportImageBlob = async (mei: MindElixirInstance, format: 'png' | '
     },
     onHost: host => {
       if (watermarkEnabled) {
-        const bgColor = mei.theme.cssVar['--bgcolor']
-        const isDark = isDarkColor(bgColor)
+        const isDark = mei.theme.type === 'dark'
         const watermarkColor = isDark ? '#f6f6f6' : '#1a1a1a'
 
         // Create watermark container
@@ -126,7 +98,10 @@ export const exportImageBlob = async (mei: MindElixirInstance, format: 'png' | '
         host.appendChild(watermark)
       }
     },
-    backgroundColor: mei.theme.cssVar['--bgcolor'],
+    // mind-elixir fills these built-in defaults on screen when a theme omits
+    // --bgcolor; mirror them so exports match the UI (and jpeg/webp don't
+    // fall back to a black canvas).
+    backgroundColor: mei.theme.cssVar['--bgcolor'] ?? (mei.theme.type === 'dark' ? '#252526' : '#f6f6f6'),
     quality: format === 'png' ? 1 : 0.7,
     ...rest,
   })
