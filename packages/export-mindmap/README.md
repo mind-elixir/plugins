@@ -41,6 +41,13 @@ import {
 
 // 获取导出URL，可用于预览或自定义处理（HTML 已废弃）
 const imageUrl = await exportImage(mindElixir, 'png')
+// 也可传第三个 options 参数，覆盖 SCST 选项或关闭水印
+const imageUrl2 = await exportImage(mindElixir, 'png', {
+  scale: 2, // 高清输出
+  watermarkEnabled: false, // 关闭水印
+  quality: 0.9,
+  onClone: clone => { /* 对克隆节点做调整 */ },
+})
 const htmlUrl = exportHtml(mindElixir)
 const jsonUrl = exportJson(mindElixir)
 const markdownUrl = exportMarkdown(mindElixir)
@@ -106,7 +113,17 @@ interface Options {
 }
 ```
 
-`exportImage` / `downloadImage` 内部即基于 SCST 实现，并额外支持 `watermarkEnabled`（默认 `true`）控制水印。
+`exportImage` / `downloadImage` 内部即基于 SCST 实现，其签名如下：
+
+```typescript
+exportImage(
+  mei: MindElixirInstance,
+  format: 'png' | 'jpeg' | 'webp',
+  options?: ImageOptions & { watermarkEnabled?: boolean } // 含下方全部 SCST 选项
+): Promise<string>
+```
+
+其中 `options` 额外支持 `watermarkEnabled`（默认 `true`）控制水印，其余字段与 SCST `Options` 相同。
 
 如需直接拿到图片 `Blob` 而不创建 URL，可调用 `exportImageBlob`（`exportImage` 的底层实现，参数完全相同）：
 
@@ -121,8 +138,8 @@ interface Options {
 
 ### 导出函数（返回 URL）
 
-- `exportImage(mei, format)` - 返回图片 URL
-- `exportImageBlob(mei, format)` - 返回图片 Blob
+- `exportImage(mei, format, options?)` - 返回图片 URL，`options` 支持 `watermarkEnabled` 及全部 SCST 选项
+- `exportImageBlob(mei, format, options?)` - 返回图片 Blob（参数同上）
 - `exportHtml(mei)` - 返回 HTML URL（已废弃）
 - `exportJson(mei)` - 返回 JSON URL
 - `exportMarkdown(mei)` - 返回 Markdown URL
