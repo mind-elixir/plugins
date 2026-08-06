@@ -234,7 +234,7 @@ function waitForImage(img: HTMLImageElement): Promise<void> {
  * Serialize a DOM element into an SVG foreignObject data URI.
  * All styles are inlined; images are converted to data URIs.
  */
-async function domToSvgDataURI(element: HTMLElement, width: number, height: number, options: Options): Promise<string> {
+async function domToSvgDataURI(element: HTMLElement, width: number, height: number, scale: number, options: Options): Promise<string> {
   // 1. Clone the node (deep clone)
   const clone = element.cloneNode(true) as HTMLElement
 
@@ -300,11 +300,16 @@ async function domToSvgDataURI(element: HTMLElement, width: number, height: numb
   await inlineImages(host)
 
   // 6. Build the SVG wrapper
+  // Intrinsic size = logical size * scale, viewBox stays logical. This makes
+  // the browser rasterize the vector content at full resolution. Relying on
+  // ctx.scale() during drawImage instead does NOT work cross-browser: WebKit
+  // rasterizes SVG images at their intrinsic size and stretches the bitmap,
+  // so exports come out blurry on retina screens.
   const svgNS = 'http://www.w3.org/2000/svg'
   const svg = document.createElementNS(svgNS, 'svg') as SVGSVGElement
   svg.setAttribute('xmlns', svgNS)
-  svg.setAttribute('width', String(width))
-  svg.setAttribute('height', String(height))
+  svg.setAttribute('width', String(Math.round(width * scale)))
+  svg.setAttribute('height', String(Math.round(height * scale)))
   svg.setAttribute('viewBox', `0 0 ${width} ${height}`)
 
   // 7. Wrap host in <foreignObject>
@@ -332,9 +337,10 @@ export async function domToBlob(element: HTMLElement, format: 'png' | 'jpeg' | '
   const scale = options.scale ?? window.devicePixelRatio ?? 1
   const quality = options.quality ?? (format === 'png' ? 1 : 0.85)
 
-  const svgDataURI = await domToSvgDataURI(element, width, height, options)
+  const svgDataURI = await domToSvgDataURI(element, width, height, scale, options)
 
-  // Draw SVG onto canvas
+  // Draw SVG onto canvas. The SVG's intrinsic size already matches the canvas
+  // size (width*scale), so we draw 1:1 — no ctx.scale() needed.
   const canvas = document.createElement('canvas')
   canvas.width = Math.round(width * scale)
   canvas.height = Math.round(height * scale)
@@ -344,7 +350,6 @@ export async function domToBlob(element: HTMLElement, format: 'png' | 'jpeg' | '
     ctx.fillStyle = options.backgroundColor
     ctx.fillRect(0, 0, canvas.width, canvas.height)
   }
-  ctx.scale(scale, scale)
 
   const img = new Image()
   img.src = svgDataURI
