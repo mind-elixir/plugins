@@ -1,7 +1,7 @@
 import { MindElixirInstance } from 'mind-elixir'
 import { convertToHtml, HtmlExportOptions } from './html'
 import { convertToMd } from './markdown'
-import { domToObjectURL, Options } from './scst'
+import { domToBlob, Options } from './scst'
 import iconUrl from './icon.png'
 
 export const downloadUrl = async (url: string, fileName: string) => {
@@ -49,7 +49,7 @@ const getOffsetLT = (parent: HTMLElement, child: HTMLElement) => {
   return { offsetLeft, offsetTop }
 }
 
-export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg' | 'webp', options?: Options & { watermarkEnabled?: boolean }) => {
+export const exportImageBlob = async (mei: MindElixirInstance, format: 'png' | 'jpeg' | 'webp', options?: Options & { watermarkEnabled?: boolean }) => {
   const { watermarkEnabled = true, ...rest } = options || {}
   const labels = mei.nodes.querySelectorAll('.svg-label')
   let marginL = 0
@@ -71,7 +71,7 @@ export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg
   if (marginR > 0) width += marginR + 10
   const height = mei.nodes.offsetHeight
 
-  const url = await domToObjectURL(mei.nodes, format, {
+  const blob = await domToBlob(mei.nodes, format, {
     height,
     width,
     onClone: clone => {
@@ -125,7 +125,12 @@ export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg
     quality: format === 'png' ? 1 : 0.7,
     ...rest,
   })
-  return url
+  return blob
+}
+
+export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg' | 'webp', options?: Options & { watermarkEnabled?: boolean }) => {
+  const blob = await exportImageBlob(mei, format, options)
+  return URL.createObjectURL(blob)
 }
 
 export const downloadImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg' | 'webp') => {

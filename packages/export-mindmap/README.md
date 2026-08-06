@@ -23,7 +23,7 @@ import {
 // 导出图片
 await downloadImage(mindElixir, 'png') // 支持 'png' | 'jpeg' | 'webp'
 
-// 导出文档
+// 导出文档（HTML 已废弃，请优先使用图片/JSON/Markdown）
 downloadHtml(mindElixir)
 downloadJson(mindElixir)
 downloadMarkdown(mindElixir)
@@ -39,7 +39,7 @@ import {
   exportMarkdown,
 } from '@mind-elixir/export-mindmap'
 
-// 获取导出URL，可用于预览或自定义处理
+// 获取导出URL，可用于预览或自定义处理（HTML 已废弃）
 const imageUrl = await exportImage(mindElixir, 'png')
 const htmlUrl = exportHtml(mindElixir)
 const jsonUrl = exportJson(mindElixir)
@@ -113,14 +113,14 @@ interface Options {
 ### 下载函数
 
 - `downloadImage(mei, format)` - 下载图片
-- `downloadHtml(mei)` - 下载 HTML 文件
+- `downloadHtml(mei)` - 下载 HTML 文件（已废弃）
 - `downloadJson(mei)` - 下载 JSON 文件
 - `downloadMarkdown(mei)` - 下载 Markdown 文件
 
 ### 导出函数（返回 URL）
 
 - `exportImage(mei, format)` - 返回图片 URL
-- `exportHtml(mei)` - 返回 HTML URL
+- `exportHtml(mei)` - 返回 HTML URL（已废弃）
 - `exportJson(mei)` - 返回 JSON URL
 - `exportMarkdown(mei)` - 返回 Markdown URL
 
