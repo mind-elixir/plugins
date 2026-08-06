@@ -108,6 +108,8 @@ interface Options {
 
 `exportImage` / `downloadImage` 内部即基于 SCST 实现，并额外支持 `watermarkEnabled`（默认 `true`）控制水印。
 
+如需直接拿到图片 `Blob` 而不创建 URL，可调用 `exportImageBlob`（`exportImage` 的底层实现，参数完全相同）：
+
 ## API
 
 ### 下载函数
@@ -120,6 +122,7 @@ interface Options {
 ### 导出函数（返回 URL）
 
 - `exportImage(mei, format)` - 返回图片 URL
+- `exportImageBlob(mei, format)` - 返回图片 Blob
 - `exportHtml(mei)` - 返回 HTML URL（已废弃）
 - `exportJson(mei)` - 返回 JSON URL
 - `exportMarkdown(mei)` - 返回 Markdown URL

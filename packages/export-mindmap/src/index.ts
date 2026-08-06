@@ -11,6 +11,11 @@ export const downloadUrl = async (url: string, fileName: string) => {
   link.click()
 }
 
+/** Revoke a blob URL after the browser has started the download */
+const revokeAfterDownload = (url: string) => {
+  setTimeout(() => URL.revokeObjectURL(url), 0)
+}
+
 const isDarkColor = (color?: string): boolean => {
   if (!color) return false
   let r, g, b
@@ -136,6 +141,7 @@ export const exportImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg
 export const downloadImage = async (mei: MindElixirInstance, format: 'png' | 'jpeg' | 'webp') => {
   const url = await exportImage(mei, format)
   downloadUrl(url, mei.nodeData.topic + '.' + format)
+  revokeAfterDownload(url)
 }
 
 /**
@@ -155,6 +161,7 @@ export const exportHtml = (mei: MindElixirInstance, options?: HtmlExportOptions)
 export const downloadHtml = (mei: MindElixirInstance, options?: HtmlExportOptions) => {
   const url = exportHtml(mei, options)
   downloadUrl(url, mei.nodeData.topic + '.html')
+  revokeAfterDownload(url)
 }
 
 export const exportJson = (mei: MindElixirInstance) => {
@@ -167,6 +174,7 @@ export const exportJson = (mei: MindElixirInstance) => {
 export const downloadJson = (mei: MindElixirInstance) => {
   const url = exportJson(mei)
   downloadUrl(url, mei.nodeData.topic + '.json')
+  revokeAfterDownload(url)
 }
 
 export const exportMarkdown = (mei: MindElixirInstance) => {
@@ -180,6 +188,7 @@ export const exportMarkdown = (mei: MindElixirInstance) => {
 export const downloadMarkdown = (mei: MindElixirInstance) => {
   const url = exportMarkdown(mei)
   downloadUrl(url, mei.nodeData.topic + '.md')
+  revokeAfterDownload(url)
 }
 
 export const exportMethodList = [
