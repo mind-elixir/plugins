@@ -291,6 +291,15 @@ async function domToSvgDataURI(element: HTMLElement, width: number, height: numb
     `height:${height}px`,
     'overflow:visible',
     'position:relative',
+    // Scale the whole host instead of using an SVG viewBox. WebKit/macOS
+    // rasterizes <foreignObject> content at its LOGICAL pixel size and
+    // ignores the SVG viewBox when the SVG is consumed as an <img>, so a
+    // viewBox-scaled map overflows the intrinsic bitmap and only its top-left
+    // corner (or nothing, for large maps) gets captured. A CSS transform on
+    // the host keeps every engine rendering the full map at intrinsic size
+    // width*scale x height*scale — crisp at any scale (incl. retina).
+    `transform:scale(${scale})`,
+    'transform-origin:0 0',
     ...(options.backgroundColor ? [`background:${options.backgroundColor}`] : []),
   ].join(';')
   host.appendChild(clone)
@@ -300,24 +309,20 @@ async function domToSvgDataURI(element: HTMLElement, width: number, height: numb
   await inlineImages(host)
 
   // 6. Build the SVG wrapper
-  // Intrinsic size = logical size * scale, viewBox stays logical. This makes
-  // the browser rasterize the vector content at full resolution. Relying on
-  // ctx.scale() during drawImage instead does NOT work cross-browser: WebKit
-  // rasterizes SVG images at their intrinsic size and stretches the bitmap,
-  // so exports come out blurry on retina screens.
+  // Intrinsic size = logical size * scale. No viewBox (see comment above) —
+  // the host is already visually scaled to width*scale x height*scale.
   const svgNS = 'http://www.w3.org/2000/svg'
   const svg = document.createElementNS(svgNS, 'svg') as SVGSVGElement
   svg.setAttribute('xmlns', svgNS)
   svg.setAttribute('width', String(Math.round(width * scale)))
   svg.setAttribute('height', String(Math.round(height * scale)))
-  svg.setAttribute('viewBox', `0 0 ${width} ${height}`)
 
-  // 7. Wrap host in <foreignObject>
+  // 7. Wrap host in <foreignObject>, sized to the intrinsic (output) size
   const fo = document.createElementNS(svgNS, 'foreignObject')
   fo.setAttribute('x', '0')
   fo.setAttribute('y', '0')
-  fo.setAttribute('width', String(width))
-  fo.setAttribute('height', String(height))
+  fo.setAttribute('width', String(Math.round(width * scale)))
+  fo.setAttribute('height', String(Math.round(height * scale)))
   fo.appendChild(host)
   svg.appendChild(fo)
 
