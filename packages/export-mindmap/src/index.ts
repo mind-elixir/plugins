@@ -27,6 +27,107 @@ const getOffsetLT = (parent: HTMLElement, child: HTMLElement) => {
   return { offsetLeft, offsetTop }
 }
 
+/**
+ * A declared background that paints nothing (`transparent`, `rgba(0,0,0,0)`,
+ * empty) is NOT a usable export canvas: it flows through `??`-style guards
+ * untouched and produces a transparent PNG — light text on a white viewer,
+ * the exact bug this resolver exists to prevent. Treat it as "no value".
+ */
+const isUsableBg = (value: string | undefined | null): value is string =>
+  !!value &&
+  value.trim() !== '' &&
+  value.trim().toLowerCase() !== 'transparent' &&
+  !/^rgba\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0\s*\)$/.test(value.trim())
+
+/**
+ * Base-theme canvas colors, mirroring mind-elixir's built-in themes
+ * (`THEME.cssVar['--bgcolor']` / `DARK_THEME.cssVar['--bgcolor']`).
+ * Used only when every declared value is absent or transparent.
+ */
+const BASE_BG = { dark: '#252526', light: '#f6f6f6' } as const
+
+/**
+ * Resolve the map's real background color.
+ *
+ * `changeTheme` always writes the fully-merged cssVar onto the container, so
+ * the computed `--bgcolor` is the single source of truth — it already accounts
+ * for the base theme, partial overrides, and any `cssVar` the caller never
+ * declared. `theme.type` is NOT a reliable signal: it only selects the base
+ * layer (`{...(type==='dark'?DARK:LIGHT).cssVar, ...theme.cssVar}`), which a
+ * custom `--bgcolor` is free to contradict.
+ *
+ * A caller may deliberately set `--bgcolor: transparent` on screen (e.g. to
+ * let the map blend into a page card). For export that value is unusable
+ * (see `isUsableBg`), so resolution falls through to the declared theme value
+ * and finally to the base-theme color for `theme.type` — callers never need
+ * to pass `backgroundColor` just to work around transparency.
+ */
+export const resolveExportBackground = (mei: MindElixirInstance): string => {
+  const container = mei.container
+  const cssVarBg = container
+    ? getComputedStyle(container).getPropertyValue('--bgcolor').trim()
+    : ''
+  if (isUsableBg(cssVarBg)) return cssVarBg
+
+  // Fall back to the declared value only if the DOM has nothing usable
+  // (e.g. the instance was never attached, or --bgcolor was set to transparent).
+  const declared = mei.theme?.cssVar?.['--bgcolor']
+  if (isUsableBg(declared)) return declared
+
+  // Every layer says "transparent": the screen intent cannot be exported.
+  // Fall back to the base theme color for this theme's type.
+  return mei.theme?.type === 'dark' ? BASE_BG.dark : BASE_BG.light
+}
+
+/**
+ * Pick a foreground color that stays legible on `background`.
+ *
+ * This is a pure computation, not a fallback: it derives the watermark color
+ * from the background it will actually be drawn on, using the WCAG relative
+ * luminance formula. Unlike the old `theme.type === 'dark'` check, it stays
+ * correct when a custom `--bgcolor` contradicts the theme's declared type.
+ *
+ * Throws on an unparseable color rather than defaulting — an unreadable
+ * watermark should be a loud failure, not a silent one.
+ */
+export const contrastColor = (background: string): '#f6f6f6' | '#1a1a1a' => {
+  let r: number
+  let g: number
+  let b: number
+  const value = String(background || '').trim()
+  if (value.startsWith('#')) {
+    const hex = value.slice(1)
+    const full =
+      hex.length === 3 || hex.length === 4
+        ? hex
+            .split('')
+            .slice(0, 3)
+            .map(c => c + c)
+            .join('')
+        : hex
+    r = parseInt(full.slice(0, 2), 16)
+    g = parseInt(full.slice(2, 4), 16)
+    b = parseInt(full.slice(4, 6), 16)
+  } else {
+    const parts = value.match(/[\d.]+/g)
+    if (!parts || parts.length < 3) {
+      throw new Error(`[export-mindmap] Cannot parse background color: ${JSON.stringify(background)}`)
+    }
+    r = parseFloat(parts[0])
+    g = parseFloat(parts[1])
+    b = parseFloat(parts[2])
+  }
+  if ([r, g, b].some(n => Number.isNaN(n))) {
+    throw new Error(`[export-mindmap] Cannot parse background color: ${JSON.stringify(background)}`)
+  }
+  const srgb = (c: number) => {
+    const v = c / 255
+    return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)
+  }
+  const luminance = 0.2126 * srgb(r) + 0.7152 * srgb(g) + 0.0722 * srgb(b)
+  return luminance < 0.4 ? '#f6f6f6' : '#1a1a1a'
+}
+
 export const exportImageBlob = async (mei: MindElixirInstance, format: 'png' | 'jpeg' | 'webp', options?: Options & { watermarkEnabled?: boolean }) => {
   const { watermarkEnabled = true, ...rest } = options || {}
   const labels = mei.nodes.querySelectorAll('.svg-label')
@@ -41,13 +142,15 @@ export const exportImageBlob = async (mei: MindElixirInstance, format: 'png' | '
     if (relativeRight > marginR) marginR = relativeRight
   })
 
-  console.log('marginL', marginL, 'marginR', marginR)
   // mei.nodes has no transform on it (transform is on mei.map, the parent).
   // Use scrollWidth/scrollHeight to get the full content size including overflowing children.
   let width = mei.nodes.offsetWidth
   if (marginL > 0) width += marginL + 10
   if (marginR > 0) width += marginR + 10
   const height = mei.nodes.offsetHeight
+
+  // Resolve once, then let an explicit caller override win.
+  const resolvedBg = resolveExportBackground(mei)
 
   const blob = await domToBlob(mei.nodes, format, {
     height,
@@ -59,8 +162,9 @@ export const exportImageBlob = async (mei: MindElixirInstance, format: 'png' | '
     },
     onHost: host => {
       if (watermarkEnabled) {
-        const isDark = mei.theme.type === 'dark'
-        const watermarkColor = isDark ? '#f6f6f6' : '#1a1a1a'
+        // Derive the watermark color from the ACTUAL background, not theme.type —
+        // a custom theme can pair light canvas with dark text (or vice versa).
+        const watermarkColor = contrastColor(rest.backgroundColor ?? resolvedBg)
 
         // Create watermark container
         const watermark = document.createElement('div')
@@ -98,10 +202,10 @@ export const exportImageBlob = async (mei: MindElixirInstance, format: 'png' | '
         host.appendChild(watermark)
       }
     },
-    // mind-elixir fills these built-in defaults on screen when a theme omits
-    // --bgcolor; mirror them so exports match the UI (and jpeg/webp don't
-    // fall back to a black canvas).
-    backgroundColor: mei.theme.cssVar['--bgcolor'] ?? (mei.theme.type === 'dark' ? '#252526' : '#f6f6f6'),
+    // Resolved from the live DOM, so partial/overridden themes can't leave the
+    // canvas transparent (which makes light text invisible on white viewers).
+    // An explicit caller-provided backgroundColor still wins.
+    backgroundColor: resolvedBg,
     quality: format === 'png' ? 1 : 0.7,
     ...rest,
   })
