@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 .turbo
+
+# pnpm's in-place temp dirs (store bootstrap; left behind if an install is
+# interrupted)
+_tmp_*

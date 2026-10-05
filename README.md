@@ -8,6 +8,7 @@
 |------|------|------|
 | [@mind-elixir/import-xmind](./packages/import-xmind) | ![npm](https://img.shields.io/npm/v/@mind-elixir/import-xmind) | XMind 文件导入功能 |
 | [@mind-elixir/import-freemind](./packages/import-freemind) | ![npm](https://img.shields.io/npm/v/@mind-elixir/import-freemind) | FreeMind 文件导入功能 |
+| [@mind-elixir/import-markdown](./packages/import-markdown) | ![npm](https://img.shields.io/npm/v/@mind-elixir/import-markdown) | Markdown 文档导入功能 |
 | [@mind-elixir/export-mindmap](./packages/export-mindmap) | ![npm](https://img.shields.io/npm/v/@mind-elixir/export-mindmap) | 思维导图导出功能 |
 | [@mind-elixir/open-desktop](./packages/open-desktop) | ![npm](https://img.shields.io/npm/v/@mind-elixir/open-desktop) | 桌面应用支持 |
 | [test-app](./packages/test-app) | - | 功能测试应用 |
@@ -19,6 +20,7 @@
 ├── packages/
 │   ├── import-xmind/          # XMind 导入包
 │   ├── import-freemind/       # FreeMind 导入包
+│   ├── import-markdown/       # Markdown 导入包
 │   ├── export-mindmap/        # 导出功能包
 │   ├── open-desktop/          # 桌面应用包
 │   ├── test-app/              # 测试应用
