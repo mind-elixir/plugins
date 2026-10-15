@@ -77,8 +77,18 @@ const stripFrontmatterBlock = (content: string): string => {
   return clean.replace(/^---[\s\S]*?\r?\n---\r?\n?/, '')
 }
 
-/** Read a `title` out of a leading frontmatter block, if any. */
-const readFrontmatterTitle = (content: string): string | undefined => {
+/**
+ * Read a `title` out of a leading frontmatter block, if any.
+ *
+ * Exported because a host often needs the document title for something the
+ * parse result cannot carry: the VSCode extension names the webview panel
+ * after it, and that name must stay the frontmatter title even when
+ * `h1AsRoot` has replaced the root node's topic with the H1 text.
+ *
+ * Uses the same naive `key: value` split as {@link parseMarkdown}, so the two
+ * never disagree about what the title is.
+ */
+export const readFrontmatterTitle = (content: string): string | undefined => {
   const match = content.match(/^---[\s\S]*?\r?\n---/)
   if (!match) return undefined
   const body = match[0].replace(/^---[\s\S]*?\r?\n/, '').replace(/\r?\n---$/, '')
@@ -88,12 +98,20 @@ const readFrontmatterTitle = (content: string): string | undefined => {
 /**
  * Build a hast->html stringifier for a given set of options.
  *
- * NOT cached across calls with different options: `imageSize` is a per-parse
- * input, so the single module-level processor both plugins used cannot express
- * it.
+ * NOT cached across calls with different options: `imageSize` and
+ * `rehypePlugins` are per-parse inputs, so the single module-level processor
+ * both plugins used cannot express them.
+ *
+ * Plugin order mirrors what the VSCode extension assembled by hand —
+ * `remark-rehype` -> host plugins (`rehype-highlight`) -> forced image size ->
+ * `rehype-stringify`. Size is applied last so a host plugin that rewrites an
+ * `<img>` still gets its dimensions forced afterwards.
  */
 const createHtmlProcessor = (options: ParseOptions) => {
   const processor = unified().use(remarkRehype) as any
+  if (options.rehypePlugins?.length) {
+    processor.use(options.rehypePlugins as any)
+  }
   if (options.imageSize) {
     const { width, height } = options.imageSize
     processor.use(() => (tree: HastRoot) => {

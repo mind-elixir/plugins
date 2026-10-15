@@ -55,7 +55,25 @@ mindElixir.init(data)
 | `h1AsRoot` | `boolean` | `false` | 把第一个一级标题提升为根节点 |
 | `frontmatter` | `'strip' \| 'title' \| 'keep'` | `'strip'` | 如何处理 YAML frontmatter：`strip` 移除、`title` 移除并把`title:`提为根标题、`keep` 保留为节点 |
 | `imageSize` | `{ width: number; height: number }` | — | 强制覆盖所有 `<img>` 的宽高 |
+| `rehypePlugins` | `PluggableList` | — | hast 阶段插件，在 `remark-rehype` 之后、`imageSize` 之前插入 |
 | `transformHtml` | `(html, ctx) => string` | — | 生成 HTML 后的宿主后处理钩子 |
+
+### `rehypePlugins`：需要在语法树上做的宿主逻辑
+
+`transformHtml` 只能拿到已经序列化完成的 HTML 字符串。有些逻辑必须在 hast 阶段介入——比如 VSCode 侧用 `rehype-highlight` 给围栏代码块加上 `hljs-*` span（其 webview 会注入 `public/hljs.css` 上色），字符串钩子做不到这件事。这类插件通过 `rehypePlugins` 传入：
+
+```typescript
+import { parseMarkdown } from '@mind-elixir/import-markdown'
+import rehypeHighlight from 'rehype-highlight'
+
+const data = parseMarkdown(text, {
+  filename: 'readme',
+  rehypePlugins: [rehypeHighlight],
+  imageSize: { width: 200, height: 100 },
+})
+```
+
+插件链顺序固定为 `remark-rehype` → `rehypePlugins` → `imageSize` → `rehype-stringify`，与 VSCode 插件原先手工拼装的顺序一致。processor 每次解析独立构造，因此同一个插件实例可以在多次调用间安全复用。
 
 ### `transformHtml`：宿主差异的接入口
 
@@ -85,7 +103,7 @@ const data = parseMarkdown(text, {
 
 - **修复**：Obsidian 原实现在 `h1AsRoot` 下用`heading.value` 取标题，而 mdast 的 heading 没有 `value` 字段（文本在 `children` 中），导致根标题为 `undefined`。本包统一走 `extractText`。
 - **修复**：`transformHtml` 为每次解析独立持有，不再是模块级单例，两个并发解析不会互相串味。
-- `rehype-highlight`（VSCode 侧的代码高亮）与 Obsidian 的 wikilink / KaTeX / 附件处理均**不在**本包内，需要的话经由 `transformHtml` 或调用方自己的 rehype 插件链传入。
+- `rehype-highlight`（VSCode 侧的代码高亮）与 Obsidian 的 wikilink / KaTeX / 附件处理均**不在**本包内：前者经 `rehypePlugins` 传入，后者经 `transformHtml` 实现。
 
 ## 许可
 

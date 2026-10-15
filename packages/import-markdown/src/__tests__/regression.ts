@@ -45,6 +45,25 @@ const run = (md: string, options: Parameters<typeof parseMarkdown>[1] = {}) => n
 type Case = { name: string; md: string; options?: Parameters<typeof parseMarkdown>[1] }
 type Result = { name: string; actual: any }
 
+/**
+ * Stand-in for `rehype-highlight`, which the VSCode extension really passes.
+ *
+ * The point of the fixture is the seam, not the highlighting: tagging every
+ * `<code>` proves the plugin ran on the hast tree BEFORE `rehype-stringify`
+ * (a `transformHtml` string hook demonstrably could not do this). A real
+ * highlighter is a dependency of the host, not of this package.
+ */
+const markCodeBlocks = () => (tree: any) => {
+  const walk = (node: any) => {
+    if (!node || typeof node !== 'object') return
+    if (node.type === 'element' && node.tagName === 'code') {
+      node.properties = { ...node.properties, 'data-touched': 'yes' }
+    }
+    if (Array.isArray(node.children)) node.children.forEach(walk)
+  }
+  walk(tree)
+}
+
 const cases: Case[] = [
   {
     name: 'plain document with no headings',
@@ -135,6 +154,15 @@ const optionCases: Case[] = [
     options: {
       transformHtml: html => html.replace('plain text', 'REPLACED'),
     },
+  },
+  {
+    name: '[rehypePlugins] a hast plugin reaches the generated html',
+    md: '## Code\n\n```js\nconst a = 1\n```\n',
+    options: { rehypePlugins: [markCodeBlocks] },
+  },
+  {
+    name: '[rehypePlugins] absent leaves the code block unmarked',
+    md: '## Code\n\n```js\nconst a = 1\n```\n',
   },
 ]
 
@@ -289,6 +317,20 @@ check('[imageSize] absent does not inject dimensions', () => {
 check('[transformHtml] is applied to node html', () => {
   const r = find('[transformHtml] rewrites generated html')
   assert.ok(JSON.stringify(r).includes('REPLACED'), 'transformHtml output did not reach the tree')
+})
+check('[rehypePlugins] a hast plugin transforms the tree before stringification', () => {
+  const r = find('[rehypePlugins] a hast plugin reaches the generated html')
+  const html = allHtml(r)
+  assert.ok(html.includes('<code'), `expected a code block in: ${html}`)
+  assert.ok(html.includes('data-touched="yes"'), `plugin did not run on the hast tree: ${html}`)
+})
+check('[rehypePlugins] absent is a true negative control (same doc, no plugin)', () => {
+  // Without this the case above could pass for the wrong reason -- e.g. if the
+  // fixture's markdown somehow already carried the attribute.
+  const r = find('[rehypePlugins] absent leaves the code block unmarked')
+  const html = allHtml(r)
+  assert.ok(html.includes('<code'), `expected a code block in: ${html}`)
+  assert.ok(!html.includes('data-touched'), 'the attribute appeared with no plugin supplied')
 })
 
 console.log('\nfile entry')

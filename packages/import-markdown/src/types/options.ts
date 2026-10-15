@@ -1,3 +1,5 @@
+import type { PluggableList } from 'unified'
+
 /**
  * How a YAML frontmatter block should be treated.
  *
@@ -30,11 +32,25 @@ export interface ParseOptions {
    */
   imageSize?: { width: number; height: number }
   /**
+   * hast-stage plugins appended to the pipeline, applied after `remark-rehype`
+   * and before {@link ParseOptions.imageSize}.
+   *
+   * This is the seam for behaviour that has to run on the syntax tree rather
+   * than on an HTML string: the VSCode extension passes `rehype-highlight` here
+   * so fenced code blocks come out with `hljs-*` spans (its webview ships
+   * `public/hljs.css` to colour them). `transformHtml` cannot express this —
+   * it only ever sees a finished string.
+   *
+   * The list is attached to a processor built per parse, so callers may reuse
+   * one plugin instance across calls without state leaking between documents.
+   */
+  rehypePlugins?: PluggableList
+  /**
    * Host-specific HTML post-processing, applied after remark-rehype produces a
    * node's HTML and before it is assigned to `dangerouslySetInnerHTML`.
    *
-   * This is the single extension point that absorbs host concerns: Obsidian
-   * passes wikilink rewriting + KaTeX + vault attachment resolution here.
+   * This is the extension point that absorbs host concerns: Obsidian passes
+   * wikilink rewriting + KaTeX + vault attachment resolution here.
    */
   transformHtml?: (html: string, context: TransformContext) => string
 }
