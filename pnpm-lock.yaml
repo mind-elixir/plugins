@@ -120,6 +120,12 @@ importers:
       '@types/unist':
         specifier: ^3.0.3
         version: 3.0.3
+      mdast-util-gfm:
+        specifier: ^3.1.0
+        version: 3.1.0
+      mdast-util-to-markdown:
+        specifier: ^2.2.0
+        version: 2.2.0
       rehype-stringify:
         specifier: 'catalog:'
         version: 10.0.1
@@ -691,6 +697,7 @@ packages:
 
   '@zumer/snapdom@2.7.0':
     resolution: {integrity: sha512-ZiELKzDszeFOazPQ/ExXzgtdoW9jADVjDjInr5XDAlVdCx0RbNsFiG7RLyM48XnA7EyCA9yTvmXSc3ElDrTRqA==}
+    deprecated: Old versions have known fidelity bugs (text re-wrap, width freezing, KaTeX clipping). Upgrade to ^2.22 — drop-in for any 2.x. https://github.com/zumerlab/snapdom/releases
 
   acorn@8.15.0:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}

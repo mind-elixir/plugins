@@ -7,6 +7,8 @@ import remarkParse from 'remark-parse'
 import remarkGfm from 'remark-gfm'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
+import { toMarkdown } from 'mdast-util-to-markdown'
+import { gfmToMarkdown } from 'mdast-util-gfm'
 import type { ParseOptions, TransformContext } from './types/options'
 
 export type { ParseOptions, TransformContext }
@@ -35,6 +37,7 @@ interface TreeItem {
 interface ParseContext extends TransformContext {
   processor: ReturnType<typeof createHtmlProcessor>
   transformHtml?: ParseOptions['transformHtml']
+  editable?: boolean
 }
 
 const generateId = (): string => Math.random().toString(36).substring(2, 11)
@@ -51,6 +54,26 @@ const extractText = (node: any): string => {
   if (typeof node.value === 'string') return node.value
   if (Array.isArray(node.children)) return node.children.map(extractText).join('')
   return ''
+}
+
+/**
+ * Convert an mdast node directly to a Markdown string.
+ * For headings, converts only the inline heading content (omits leading '#' symbols).
+ */
+const toMarkdownNode = (node: any): string => {
+  if (!node) return ''
+  try {
+    if (node.type === 'heading') {
+      return toMarkdown({ type: 'paragraph', children: node.children || [] }, { extensions: [gfmToMarkdown()] }).trim()
+    }
+    if (node.type === 'html') {
+      return typeof node.value === 'string' ? node.value.trim() : ''
+    }
+    return toMarkdown(node, { extensions: [gfmToMarkdown()] }).trim()
+  } catch (e) {
+    console.error('[import-markdown] Markdown stringify error', e)
+    return extractText(node)
+  }
 }
 
 /**
@@ -214,8 +237,12 @@ const processList = (list: List, context: ParseContext): NodeObj[] =>
     const nestedList = (listItem as any).children[1]
 
     if (contentNode) {
-      const html = toHtml(contentNode, context)
-      if (html) result.dangerouslySetInnerHTML = html
+      if (context.editable) {
+        result.topic = toMarkdownNode(contentNode)
+      } else {
+        const html = toHtml(contentNode, context)
+        if (html) result.dangerouslySetInnerHTML = html
+      }
     }
     if (nestedList && nestedList.type === 'list') {
       result.children = processList(nestedList, context)
@@ -249,11 +276,15 @@ const treeToMindElixir = (items: TreeItem[], context: ParseContext): NodeObj[] =
       continue
     }
 
-    if (item.type === 'html') {
-      node.dangerouslySetInnerHTML = (item.object as any).value
+    if (context.editable) {
+      node.topic = toMarkdownNode(item.object)
     } else {
-      const html = toHtml(item.object, context)
-      if (html) node.dangerouslySetInnerHTML = html
+      if (item.type === 'html') {
+        node.dangerouslySetInnerHTML = (item.object as any).value
+      } else {
+        const html = toHtml(item.object, context)
+        if (html) node.dangerouslySetInnerHTML = html
+      }
     }
 
     node.id = item.object.position?.start?.offset?.toString() || generateId()
@@ -277,7 +308,7 @@ const treeToMindElixir = (items: TreeItem[], context: ParseContext): NodeObj[] =
  * `filename`, matching what both host plugins did on failure.
  */
 export const parseMarkdown = (content: string, options: ParseOptions = {}): MindElixirData => {
-  const { filename = '', h1AsRoot = false, frontmatter = 'strip' } = options
+  const { filename = '', h1AsRoot = false, frontmatter = 'strip', editable = false } = options
   try {
     const source = frontmatter === 'keep' ? content : stripFrontmatterBlock(content)
     const ast = unified().use(remarkParse).use(remarkGfm).parse(source)
@@ -287,6 +318,7 @@ export const parseMarkdown = (content: string, options: ParseOptions = {}): Mind
       filename,
       processor: createHtmlProcessor(options),
       transformHtml: options.transformHtml,
+      editable,
     }
 
     let nodes: NodeObj[]
@@ -296,7 +328,7 @@ export const parseMarkdown = (content: string, options: ParseOptions = {}): Mind
       const h1Index = tree.children.findIndex(child => child.type === 'heading' && child.object.depth === 1)
       if (h1Index !== -1) {
         const h1 = tree.children[h1Index]!
-        rootTopic = extractText(h1.object) || rootTopic
+        rootTopic = (editable ? toMarkdownNode(h1.object) : extractText(h1.object)) || rootTopic
         nodes = treeToMindElixir(h1.children, context)
       } else {
         nodes = treeToMindElixir(tree.children, context)

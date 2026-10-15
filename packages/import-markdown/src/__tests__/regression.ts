@@ -164,6 +164,11 @@ const optionCases: Case[] = [
     name: '[rehypePlugins] absent leaves the code block unmarked',
     md: '## Code\n\n```js\nconst a = 1\n```\n',
   },
+  {
+    name: '[editable] nodes have topic text and no dangerouslySetInnerHTML',
+    md: '# Main Title\n\n## Sub Section\n\nparagraph with **bold** and `code`\n\n- item 1\n- item 2\n',
+    options: { h1AsRoot: true, editable: true },
+  },
 ]
 
 const all = [...cases, ...optionCases]
@@ -332,6 +337,24 @@ check('[rehypePlugins] absent is a true negative control (same doc, no plugin)',
   assert.ok(html.includes('<code'), `expected a code block in: ${html}`)
   assert.ok(!html.includes('data-touched'), 'the attribute appeared with no plugin supplied')
 })
+check('[editable] sets node topic and omits dangerouslySetInnerHTML', () => {
+  const r = find('[editable] nodes have topic text and no dangerouslySetInnerHTML')
+  assert.equal(r.nodeData.topic, 'Main Title')
+  assert.equal(r.nodeData.dangerouslySetInnerHTML, undefined)
+  assert.equal(r.nodeData.children.length, 1)
+  const sub = r.nodeData.children[0]
+  assert.equal(sub.topic, 'Sub Section')
+  assert.equal(sub.dangerouslySetInnerHTML, undefined)
+  assert.equal(sub.children.length, 1)
+  const p = sub.children[0]
+  assert.equal(p.topic, 'paragraph with **bold** and `code`')
+  assert.equal(p.dangerouslySetInnerHTML, undefined)
+  assert.equal(p.children.length, 2)
+  assert.equal(p.children[0].topic, 'item 1')
+  assert.equal(p.children[0].dangerouslySetInnerHTML, undefined)
+  assert.equal(p.children[1].topic, 'item 2')
+  assert.equal(p.children[1].dangerouslySetInnerHTML, undefined)
+})
 
 console.log('\nfile entry')
 {
@@ -347,6 +370,12 @@ console.log('\nfile entry')
     // sanity: an explicit filename wins over the derived one
     const d = await importMarkdownFile(new File(['## X\n'], 'a.md'), { filename: 'Override' })
     assert.equal(d.nodeData.topic, 'Override')
+  })
+  const dataEditable = await importMarkdownFile(file, { editable: true })
+  check('importMarkdownFile supports editable option', () => {
+    assert.equal(dataEditable.nodeData.topic, 'My Note')
+    assert.equal(dataEditable.nodeData.children[0].topic, 'From File')
+    assert.equal(dataEditable.nodeData.children[0].dangerouslySetInnerHTML, undefined)
   })
 }
 

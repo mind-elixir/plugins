@@ -53,6 +53,13 @@ export interface ParseOptions {
    * wikilink rewriting + KaTeX + vault attachment resolution here.
    */
   transformHtml?: (html: string, context: TransformContext) => string
+  /**
+   * When true, nodes will be populated with `topic` instead of
+   * `dangerouslySetInnerHTML`, making them editable in Mind Elixir.
+   *
+   * @default false
+   */
+  editable?: boolean
 }
 
 /**
