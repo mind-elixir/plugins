@@ -9,6 +9,49 @@ const DEFAULT_LAUNCH_TIMEOUT = 8000
 const DEFAULT_SETTLE_DELAY = 1000
 const PING_INTERVAL = 100
 
+const isMobileBrowser = (): boolean => {
+  return (
+    /iPad|iPhone|iPod|Android/i.test(navigator.userAgent) ||
+    // iPadOS 默认使用桌面版 UA，通过触摸点数量区分 Mac。
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  )
+}
+
+const createRequestId = (): string => {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
+
+const encodeBase64Url = (value: string): string => {
+  const bytes = new TextEncoder().encode(value)
+  let binary = ''
+  for (const byte of bytes) binary += String.fromCharCode(byte)
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '')
+}
+
+const createMobileImportUrl = (
+  appUrl: string,
+  mindmapData: MindElixirData,
+  source: string
+): string => {
+  const url = new URL(appUrl)
+  url.host = 'create-mindmap'
+  url.pathname = ''
+  url.search = ''
+  url.hash = ''
+  url.searchParams.set(
+    'data',
+    encodeBase64Url(
+      JSON.stringify({
+        mindmap: JSON.stringify(mindmapData),
+        source,
+        requestId: createRequestId(),
+      })
+    )
+  )
+  return url.toString()
+}
+
 /**
  * 唤起 App。
  * 使用顶层导航到自定义协议（必须在用户手势中调用），
@@ -110,6 +153,13 @@ export const launchMindElixir = async (
     timeout = DEFAULT_LAUNCH_TIMEOUT,
     settleDelay = DEFAULT_SETTLE_DELAY,
   } = options
+
+  // 移动端切到 App 后，后台浏览器中的 localhost 轮询和 POST 可能被暂停，
+  // 不能作为可靠的传输通道。必须在用户手势的同步调用链中直接唤起带数据的自定义协议。
+  if (isMobileBrowser()) {
+    openApp(createMobileImportUrl(appUrl, mindmapData, source || window.location.href))
+    return
+  }
 
   // 先检测应用是否已在运行
   const appWasRunning = await isServiceUp(pingUrl)

@@ -1,9 +1,9 @@
 {
   "name": "@mind-elixir/open-desktop",
   "private": false,
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
-  "description": "Import XMind files to MindElixir format",
+  "description": "Launch Mind Elixir and import mind map data from a browser",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "publishConfig": {
